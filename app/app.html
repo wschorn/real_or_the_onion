@@ -1,18 +1,18 @@
 <head>
-  <title>Leaderboard</title>
+  <title>Real or The Onion?</title>
 </head>
 
 <body>
   <div id="outer">
-    {{> new_player }}
+    {{> new_article }}
     {{> leaderboard}}
   </div>
 </body>
 
 <template name="leaderboard">
   <div class="leaderboard">
-    {{#each players}}
-      {{> player}}
+    {{#each articles}}
+      {{> article}}
     {{/each}}
   </div>
 
@@ -22,20 +22,20 @@
     <input type="button" class="inc" value="Give 5 points" />
   </div>
   {{else}}
-  <div class="none">Click a player to select</div>
+  <div class="none">Click a article to select</div>
   {{/if}}
 </template>
 
-<template name="player">
-  <div class="player {{selected}}">
+<template name="article">
+  <div class="article {{selected}}">
     <span class="name">{{name}}</span>
     <span class="score">{{score}}</span>
   </div>
 </template>
 
-<template name="new_player">
-  <div class="new_player">
-    <input id="new_player_name" type="text" />
+<template name="new_article">
+  <div class="new_article">
+    <input id="new_article_name" type="text" />
     <input type="button" class="add" value="Add Player" />
   </div>
 </template>
