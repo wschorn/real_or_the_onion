@@ -3,8 +3,11 @@
 
 Players = new Meteor.Collection("articles");
 
+
+
 if (Meteor.isClient) {
   Template.leaderboard.articles = function () {
+
     return Players.find({}, {sort: {score: -1, name: 1}});
   };
 
@@ -39,15 +42,26 @@ if (Meteor.isClient) {
 // On server startup, create some articles if the database is empty.
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    if (Players.find().count() === 0) {
+
+    //Players.clear();
+
+    if (Players.find().count() <= 5) {
+      
+
+      var mockup1 = [{"title": "funny story #" + Math.random(0, 100), "description": "a funny thing happened"}];
+      var links = mockup1;
+      console.log("ha " + links);
       var names = ["Ada Lovelace",
                    "Grace Hopper",
                    "Marie Curie",
                    "Carl Friedrich Gauss",
                    "Nikola Tesla",
                    "Claude Shannon"];
-      for (var i = 0; i < names.length; i++)
-        Players.insert({name: names[i], score: Math.floor(Random.fraction()*10)*5});
+      for (var i = 0; i < links.length; i++){
+        Players.insert({"title": links[i].title, "description": links[i].description});
+        console.log("ha " + links[i]);
+      }
+
     }
   });
 }
