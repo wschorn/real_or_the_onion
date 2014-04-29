@@ -1,90 +1,127 @@
-body {
+body
+{
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 200;
+
     margin: 50px 0;
     padding: 0;
+
     -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
+
     -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+         -o-user-select: none;
 }
 
-#outer {
+#outer
+{
     width: 600px;
     margin: 0 auto;
 }
 
-.article {
-    cursor: pointer;
+.article
+{
     padding: 5px;
 
+    cursor: pointer;
 }
 
 
-.title-link {
+.title-link
+{
     font-size: 48px;
+
     color: #61b3de;
-
-
-   
 }
 
- .title-link:hover{
+.title-link:hover
+{
+    color: #00693f;
+}
 
-        color: #00693F;
+
+input.inc-hide
+{
+    display: none;
+    float: right;
+
+    height: 30px;
+
+    color: #1d2951;
+    border: 1px solid #1d2951;
+    -webkit-border-radius: 1px;
+       -moz-border-radius: 1px;
+            border-radius: 1px;
+}
+
+input.inc-hide.selected
+{
+    display: inline-block !important;
+}
 
 
-    }
 
-li.art-li {
+li.art-li
+{
+    float: left;
 
     min-height: 100px;
     padding: 10px;
-    float: left;
+
     text-align: left;
-
 }
 
-.art-ul {
-    border: 1px solid #222222;
+.art-ul
+{
+    border: 1px solid #222;
 }
 
-.article .name {
-    display: inline-block;
-    min-width: 300px;
+.article .name
+{
     font-size: 1.75em;
+
+    display: inline-block;
+
+    min-width: 300px;
 }
 
-.instructions {
+.instructions
+{
     position: absolute;
     top: 50px;
     left: 50px;
 }
 
-.article.selected {
+.article.selected
+{
     background-color: yellow;
 }
 
-.article.selected .score {
+.article.selected .score
+{
     color: black;
 }
 
-.details, .none {
-    font-weight: bold;
+.details, .none
+{
     font-size: 2em;
+    font-weight: bold;
+
+    margin: 50px 10px;
+    padding: 10px 0;
+
+    border-width: 4px;
     border-style: dashed none none none;
     border-color: #ccc;
-    border-width: 4px;
-    margin: 50px 10px;
-    padding: 10px 0px;
 }
 
-.none {
+.none
+{
     color: #777;
 }
 
-.inc {
-  cursor: pointer;
+.inc
+{
+    cursor: pointer;
 }
-

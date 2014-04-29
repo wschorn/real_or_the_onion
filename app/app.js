@@ -29,7 +29,8 @@ if (Meteor.isClient) {
   };
 
   Template.leaderboard.events({
-    'click input.inc': function () {
+    'click input.inc-hide': function () {
+      console.log("clicky");
       Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
     }
   });
@@ -118,14 +119,26 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
 
 
+     Meteor.methods({
 
+        refreshFromBundle: function () {
+            fetchQuizFromBundle();
+        },
+
+        bar: function () {
+
+        // QUESTION: HOW TO CALL Meteor.methods.foo
+        return 1 + foo;        
+
+        }
+    });
         
 
 
 
     if (Players.find().count() <= 100) {
       
-    this.fetchQuizFromBundle("http://bitly.com/bundles/nathaivel/2");
+    this.fetchQuizFromBundle("http://bitly.com/bundles/jennyyin/5");
 
       var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
 
