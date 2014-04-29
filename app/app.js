@@ -4,11 +4,19 @@
 Players = new Meteor.Collection("articles");
 
 
-
 if (Meteor.isClient) {
+
+
+// var Bitly = Meteor.require("bitly-oauth");
+  
+// var dummyUser = 'wschornmeteor';
+
+// var b = new Bitly(dummyUser, "throwaway1");
+
+
   Template.leaderboard.articles = function () {
 
-    return Players.find({}, {sort: {score: -1, name: 1}});
+    return Players.find({}, {sort: {real_score: -1, name: 1}});
   };
 
   Template.leaderboard.selected_name = function () {
@@ -22,7 +30,7 @@ if (Meteor.isClient) {
 
   Template.leaderboard.events({
     'click input.inc': function () {
-      Players.update(Session.get("selected_article"), {$inc: {score: 5}});
+      Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
     }
   });
 
@@ -39,22 +47,85 @@ if (Meteor.isClient) {
       var new_article_name = document.getElementById("new_article_name").value;
       var desc = "a silly article";
 
+      //hit the endpoint here
 
 
 
-      Players.insert({name: new_article_name, score: 0});
+
+
+      Players.insert({name: new_article_name, real_score: 0});
     }
   };
 }
 
 // On server startup, create some articles if the database is empty.
 if (Meteor.isServer) {
+
+
+
+    var Bitly = Meteor.require("bitly-oauth");
+      
+    var dummyUser = 'wschornmeteor';
+
+    var b = new Bitly(dummyUser, "throwaway1");
+
+
+
+
+
+    fetchQuizFromBundle =  function(bundleUrl) {
+      var newQuiz = {}
+      // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
+      b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
+      try {
+        var result = b.bundleSync({bundle_link: bundleUrl});
+        }
+      catch(e) {
+          console.error("fetch error: " + e);
+        } 
+
+      newMysterys = []
+      console.log("adding: " + JSON.stringify(result.data.bundle));
+
+      var links = result.data.bundle.links;
+
+      for (var i = 0; i < links.length; i++){
+        Players.insert({"title": links[i].title, "description": links[i].description});
+
+        console.log("desc " + links[i].description);
+      }
+
+      for(var myLink in result.data.bundle.links){
+        curr = result.data.bundle.links[myLink];
+        console.log("bundle link: " + curr);
+        ng = {"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"};
+
+        newMysterys.push(ng);
+      }
+      var rdb = result.data.bundle;
+      //currently the user photo is stored in the description. this is janky, eventually we should perhaps pull the first link in the bundle?
+      newQuiz = {user: rdb.bundle_owner, name: rdb.title, userPhoto: rdb.description, Mysterys: newMysterys, ts_modified: rdb.last_modified_ts};
+      console.log("NQ" + newQuiz);
+      return newQuiz;
+     };
+
+   
+
+
+
+
+
   Meteor.startup(function () {
 
-    //Players.clear();
 
-    if (Players.find().count() <= 10) {
+
+        
+
+
+
+    if (Players.find().count() <= 100) {
       
+    this.fetchQuizFromBundle("http://bitly.com/bundles/nathaivel/2");
 
       var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
 
@@ -93,12 +164,10 @@ if (Meteor.isServer) {
 };
 
 
-  mockup2f = mockup2.data.bundle.links;
-  console.log(mockup2f);
 
 
 
-      var links = mockup2f;
+      var links = {};
       console.log("ha " + links);
       var names = ["Ada Lovelace",
                    "Grace Hopper",
@@ -107,7 +176,7 @@ if (Meteor.isServer) {
                    "Nikola Tesla",
                    "Claude Shannon"];
       for (var i = 0; i < links.length; i++){
-        Players.insert({"title": links[i].title, "description": links[i].description});
+        Players.insert({"title": links[i].title, "description": links[i].description, "real_score": 0});
         console.log("ha " + links[i]);
       }
 
