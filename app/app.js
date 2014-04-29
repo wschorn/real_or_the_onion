@@ -6,6 +6,11 @@ Players = new Meteor.Collection("articles");
 
 if (Meteor.isClient) {
 
+UI.registerHelper('nullZero', function( a ) {
+  a = a ? a : 0;
+  return a;
+
+});
 
 // var Bitly = Meteor.require("bitly-oauth");
   
