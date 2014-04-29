@@ -11,9 +11,11 @@
 
 <template name="leaderboard">
   <div class="leaderboard">
+    <ul class="art-ul">
     {{#each articles}}
       {{> article}}
     {{/each}}
+  </ul>
   </div>
 
   {{#if selected_name}}
@@ -22,15 +24,17 @@
     <input type="button" class="inc" value="Give 5 points" />
   </div>
   {{else}}
-  <div class="none">Click a article to select</div>
+  <div class="instructions">Click a article to select</div>
   {{/if}}
 </template>
 
 <template name="article">
+  <li class="art-li">
   <div class="article {{selected}}">
-    <span class="name">{{name}}</span>
-    <span class="score">{{score}}</span>
+    <span class="name">{{title}}</span>
+    <span class="score">{{description}}</span>
   </div>
+  </li>
 </template>
 
 <template name="new_article">
