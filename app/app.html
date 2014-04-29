@@ -3,7 +3,18 @@
 </head>
 
 <body>
-  <div id="outer">
+<header class="page-head">
+<div class="container">
+    <a class="site-logo" href="https://bitly.com/" title="bitly">
+        <img src="http://bitly.com/s/beta/graphics/unified/logo.png" alt="bitly">
+    </a>
+    <div class="sign-up">
+    <span class="right-margin mobile-hide">Take control of your links, <a href="https://bitly.com/a/sign_up" class="right-margin" target="_blank">sign up for free.</a></span>
+    <span class="pull-right"><a class="link" href="https://bitly.com/a/sign_in" target="_blank">Sign in</a></span>
+    </div>
+</div> <!-- /container -->
+</header>
+  <div id="outer" class="container">
     {{> new_article }}
     {{> leaderboard}}
   </div>
@@ -12,10 +23,10 @@
 <template name="leaderboard">
   <div class="leaderboard">
     <ul class="art-ul">
-    {{#each articles}}
-      {{> article}}
-    {{/each}}
-  </ul>
+        {{#each articles}}
+          {{> article}}
+        {{/each}}
+    </ul>
   </div>
 
   {{#if selected_name}}
