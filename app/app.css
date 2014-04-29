@@ -88,15 +88,7 @@ input[type=button] {
 }
 
  .title-link:hover{
-    display: none;
 
-    display: inline;
-}
-
-input.inc-hide.selected
-{
-    display: inline-block !important;
-}
         color: #00693F;
 
     }
@@ -120,10 +112,9 @@ li.art-li {
     font-size: 1.75em;
 }
 
-.article.selected
-{
+.article.selected {
     background-color: #e3f8eb;
-
+    color: #00693F !important;
 }
 
 .article.selected .score {
