@@ -93,11 +93,12 @@ if (Meteor.isServer) {
 };
 
 
-  mockup2f = mockup2.data.bundle.links[0];
-  console.log(mockup2.data.bundle);
+  mockup2f = mockup2.data.bundle.links;
+  console.log(mockup2f);
 
 
-      var links = mockup1;
+
+      var links = mockup2f;
       console.log("ha " + links);
       var names = ["Ada Lovelace",
                    "Grace Hopper",
