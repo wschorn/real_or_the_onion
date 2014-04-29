@@ -15,18 +15,18 @@ body {
     margin: 0 auto;
 }
 
-.player {
+.article {
     cursor: pointer;
     padding: 5px;
 }
 
-.player .name {
+.article .name {
     display: inline-block;
     width: 300px;
     font-size: 1.75em;
 }
 
-.player .score {
+.article .score {
     display: inline-block;
     width: 100px;
     text-align: right;
@@ -35,11 +35,11 @@ body {
     color: #777;
 }
 
-.player.selected {
+.article.selected {
     background-color: yellow;
 }
 
-.player.selected .score {
+.article.selected .score {
     color: black;
 }
 
