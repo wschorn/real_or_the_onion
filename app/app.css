@@ -65,6 +65,7 @@ input[type=button] {
     cursor: pointer;
     -webkit-user-drag: none;
     -webkit-user-select: none;
+    outline: none;
 }
 .new_article {
     text-align: center;
@@ -81,7 +82,7 @@ input[type=button] {
 
 
 .title-link {
-    font-size: 48px;
+    font-size: 36px;
     color: #61b3de;
 
 }
