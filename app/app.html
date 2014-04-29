@@ -44,7 +44,9 @@
   <div class="article {{selected}}">
     <a class="title-link" href={{long_url}}>{{title}}</a>
     <span class="description">{{description}}</span>
+
     <span class="real_score">{{real_score}}</span>
+    {{#unless is_voted}}<input type="button" class="inc-hide {{selected}}" value="This is Real!" />{{/unless}}
 
   </div>
   </li>
