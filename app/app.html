@@ -46,7 +46,7 @@
     <span class="description">{{description}}</span>
 
     <span class="real_score">{{real_score}}</span>
-    {{#unless is_voted}}<input type="button" class="inc-hide {{selected}}" value="This is Real!" />{{/unless}}
+    {{#if selected}}<input type="button" class="inc-hide {{selected}}" value="This is Real!" />{{/if}}
 
   </div>
   </li>
