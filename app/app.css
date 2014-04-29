@@ -21,6 +21,22 @@ body {
 
 }
 
+
+.title-link {
+    font-size: 48px;
+    color: #61b3de;
+
+
+   
+}
+
+ .title-link:hover{
+
+        color: #00693F;
+
+
+    }
+
 li.art-li {
 
     min-height: 100px;
