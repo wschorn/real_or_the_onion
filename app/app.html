@@ -47,9 +47,15 @@
     <a class="title-link" href={{long_url}}>{{title}}</a>
     <span class="description">{{description}}</span>
 
-    <span class="real_score">{{real_score}} real points</span>
     <br>
-    {{#if selected}}<input type="button" class="inc-hide {{real_score}}" value="This is Real!" />{{/if}}
+
+  </div>
+  <div class="voting">
+    <span class="real_score">{{real_score}} real points</span>
+    <span class="real_score">{{onion_score}} onion points</span>
+ 
+    {{#if selected}}<input type="button" class="inc-real {{real_score}}" value="This is Real!" />{{/if}}
+    {{#if selected}}<input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />{{/if}}
 
   </div>
   </li>

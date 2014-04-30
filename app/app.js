@@ -34,10 +34,12 @@ UI.registerHelper('nullZero', function( a ) {
   };
 
   Template.leaderboard.events({
-    'click input.inc-hide': function () {
-      console.log("clicky");
+    'click input.inc-real': function () {
       Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
-    }
+    },
+    'click input.inc-onion': function () {
+      Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
+    },
   });
 
   Template.article.events({
@@ -55,11 +57,7 @@ UI.registerHelper('nullZero', function( a ) {
 
       //hit the endpoint here
 
-
-
-
-
-      Players.insert({name: new_article_name, real_score: 0});
+      Players.insert({"title": "AN ARTICLE AHHH", real_score: 0});
     }
   };
 }
@@ -83,8 +81,12 @@ if (Meteor.isServer) {
       var newQuiz = {}
       // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
+     // b.getPreview = Meteor._wrapAsync(b.link.info);
+      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
+
       try {
         var result = b.bundleSync({bundle_link: bundleUrl});
+
         }
       catch(e) {
           console.error("fetch error: " + e);
@@ -96,7 +98,20 @@ if (Meteor.isServer) {
       var links = result.data.bundle.links;
 
       for (var i = 0; i < links.length; i++){
-        Players.insert({"title": links[i].title, "description": links[i].description});
+
+        try {
+        
+        var preview = b.getPreviewHTML({link: links[i].link});
+        console.log("preview \n" + preview.data.content + "\n");
+        previewHTML = preview.data.content;
+
+          }
+        catch(e){
+            console.error("preview error: " + e);
+          }
+
+
+        Players.insert({"title": links[i].title, "description": links[i].description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML});
 
         console.log("desc " + links[i].description);
       }
@@ -126,7 +141,9 @@ if (Meteor.isServer) {
 
      Meteor.methods({
 
+
         refreshFromBundle: function () {
+            Players.remove({});
             fetchQuizFromBundle();
         },
 
@@ -141,9 +158,9 @@ if (Meteor.isServer) {
 
 
 
-    if (Players.find().count() <= 100) {
-      
-    this.fetchQuizFromBundle("http://bitly.com/bundles/jennyyin/5");
+    if (Players.find().count() < 20) {
+      Players.remove({});
+    this.fetchQuizFromBundle("http://bitly.com/bundles/nathaivel/9");
 
       var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
 
