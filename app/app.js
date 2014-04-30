@@ -96,14 +96,22 @@ Template.leaderboard.bestOfType = function () {
   Template.new_article.events = {
     'click input.add': function () {
 
-
-
       var new_article_name = document.getElementById("new_article_name").value;
       var desc = "a silly article";
+      var longLink = encodeURIComponent(new_article_name);
+      var title;
+      Meteor.call('fetchFromService', longLink, function(err, respJson) {
+        if (respJson.status_txt == "OK") {
+          new_article = respJson.data.bundle.links.pop();
+          title = new_article.title ? new_article.title : 'This article has no title';
+          Players.insert({"title": title, "description": desc, real_score: 0, onion_score: 0});
+        }
+
+      });
 
       //hit the endpoint here
 
-      Players.insert({"title": "AN ARTICLE AHHH", "description": desc, real_score: 0, onion_score: 0});
+
     }
   };
 }
@@ -194,7 +202,21 @@ if (Meteor.isServer) {
         // QUESTION: HOW TO CALL Meteor.methods.foo
         return 1 + foo;
 
+        },
+        fetchFromService: function(longLink) {
+        var url = "https://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
+        //synchronous GET
+        var result = Meteor.http.get(url, {timeout:30000});
+        if(result.statusCode==200) {
+          var respJson = JSON.parse(result.content);
+          console.log("response received.");
+          return respJson;
+        } else {
+          console.log("Response issue: ", result.statusCode);
+          var errorJson = JSON.parse(result.content);
+          throw new Meteor.Error(result.statusCode, errorJson.error);
         }
+      }
     });
 
 
