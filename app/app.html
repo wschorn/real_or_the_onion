@@ -4,15 +4,17 @@
 
 <body>
 <header class="page-head">
-<div class="container">
-    <a class="site-logo" href="https://bitly.com/" title="bitly">
-        <img src="http://bitly.com/s/beta/graphics/unified/logo.png" alt="bitly">
-    </a>
-    <div class="sign-up">
-    <span class="right-margin mobile-hide">Take control of your links, <a href="https://bitly.com/a/sign_up" class="right-margin" target="_blank">sign up for free.</a></span>
-    <span class="pull-right"><a class="link" href="https://bitly.com/a/sign_in" target="_blank">Sign in</a></span>
-    </div>
-</div> <!-- /container -->
+    <div class="container roo-g-r">
+        <div class="roo-u-1-2">
+            <a class="site-logo" href="https://bitly.com/" title="bitly">
+                <img src="http://bitly.com/s/beta/graphics/unified/logo.png" alt="bitly">
+            </a>
+        </div>
+        <div class="roo-u-1-2 headroom">
+        <span class="right-margin mobile-hide">Take control of your links, <a href="https://bitly.com/a/sign_up" class="right-margin" target="_blank">sign up for free.</a></span>
+        <span class="pull-right"><a class="link" href="https://bitly.com/a/sign_in" target="_blank">Sign in</a></span>
+        </div>
+    </div> <!-- /container -->
 </header>
   <div id="outer" class="container">
     {{> new_article }}
@@ -54,8 +56,8 @@
 </template>
 
 <template name="new_article">
-  <div class="new_article">
-    <input id="new_article_name" type="text" />
-    <input type="button" class="add" value="Add Player" />
+  <div class="new_article roo-g-r">
+    <input id="new_article_name" type="text" class="roo-u-5-12" />
+    <input type="button" class="add roo-u-1-7" value="Add Player" />
   </div>
 </template>
