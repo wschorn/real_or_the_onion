@@ -13,7 +13,7 @@ UI.registerHelper('nullZero', function( a ) {
 });
 
 // var Bitly = Meteor.require("bitly-oauth");
-  
+
 // var dummyUser = 'wschornmeteor';
 
 // var b = new Bitly(dummyUser, "throwaway1");
@@ -114,7 +114,7 @@ if (Meteor.isServer) {
 
 
     var Bitly = Meteor.require("bitly-oauth");
-      
+
     var dummyUser = 'wschornmeteor';
 
     var b = new Bitly(dummyUser, "throwaway1");
@@ -136,17 +136,17 @@ if (Meteor.isServer) {
         }
       catch(e) {
           console.error("fetch error: " + e);
-        } 
+        }
 
       newMysterys = []
       console.log("adding: " + JSON.stringify(result.data.bundle));
 
       var links = result.data.bundle.links;
-      var previewHTML = ""; 
+      var previewHTML = "";
       for (var i = 0; i < links.length; i++){
 
         try {
-        
+
         var preview = b.getPreviewHTML({link: links[i].link});
 
         previewHTML = preview.data.content;
@@ -176,10 +176,6 @@ if (Meteor.isServer) {
       return newQuiz;
      };
 
-   
-
-
-
 
 
   Meteor.startup(function () {
@@ -196,12 +192,10 @@ if (Meteor.isServer) {
         bar: function () {
 
         // QUESTION: HOW TO CALL Meteor.methods.foo
-        return 1 + foo;        
+        return 1 + foo;
 
         }
     });
-        
-
 
 
     if (Players.find().count() < 20) {
