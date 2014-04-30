@@ -24,6 +24,32 @@ UI.registerHelper('nullZero', function( a ) {
     return Players.find({}, {sort: {real_score: -1, name: 1}});
   };
 
+
+Template.leaderboard.bestReal = function () {
+
+
+
+
+  };
+
+Template.leaderboard.bestOfType = function () {
+
+
+  if(Session.equals("selected_type", "real")){
+    return Players.find({}, {sort: {real_score: -1, name: 1}});
+
+  }
+
+  if(Session.equals("selected_type", "onion")){
+      return Players.find({}, {sort: {onion_score: -1, name: 1}});
+  }
+
+    return Players.find({}, {sort: {real_score: -1, name: 1}});
+
+
+  };
+
+
   Template.leaderboard.selected_name = function () {
     var article = Players.findOne(Session.get("selected_article"));
     return article && article.name;
@@ -33,11 +59,33 @@ UI.registerHelper('nullZero', function( a ) {
     return Session.equals("selected_article", this._id) ? "selected" : '';
   };
 
+    Template.type_tabs.selectedOnion = function () {
+    return Session.equals("selected_type", "onion") ? "selected" : '';
+  };
+
+      Template.type_tabs.selectedReal = function () {
+    return Session.equals("selected_type", "real") ? "selected" : '';
+  };
+
   Template.leaderboard.events({
-    'click input.inc-hide': function () {
-      console.log("clicky");
+    'click input.inc-real': function () {
       Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
+    },
+    'click input.inc-onion': function () {
+      Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
     }
+  });
+
+  Template.type_tabs.events({
+    'click input.tab_real': function () {
+      Session.set("selected_type", "real");
+    },
+    'click input.tab_onion': function () {
+      Session.set("selected_type", "onion");
+    },
+    'click input.tab_leader': function () {
+      Session.set("selected_type", "leader");
+    },
   });
 
   Template.article.events({
@@ -55,11 +103,7 @@ UI.registerHelper('nullZero', function( a ) {
 
       //hit the endpoint here
 
-
-
-
-
-      Players.insert({name: new_article_name, real_score: 0});
+      Players.insert({"title": "AN ARTICLE AHHH", "description": desc, real_score: 0, onion_score: 0});
     }
   };
 }
@@ -83,8 +127,12 @@ if (Meteor.isServer) {
       var newQuiz = {}
       // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
+     // b.getPreview = Meteor._wrapAsync(b.link.info);
+      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
+
       try {
         var result = b.bundleSync({bundle_link: bundleUrl});
+
         }
       catch(e) {
           console.error("fetch error: " + e);
@@ -94,9 +142,22 @@ if (Meteor.isServer) {
       console.log("adding: " + JSON.stringify(result.data.bundle));
 
       var links = result.data.bundle.links;
-
+      var previewHTML = ""; 
       for (var i = 0; i < links.length; i++){
-        Players.insert({"title": links[i].title, "description": links[i].description});
+
+        try {
+        
+        var preview = b.getPreviewHTML({link: links[i].link});
+
+        previewHTML = preview.data.content;
+        console.log("preview \n" + previewHTML + "\n");
+          }
+        catch(e){
+            console.error("preview error: " + e);
+          }
+
+
+        Players.insert({"title": links[i].title, "description": links[i].description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML});
 
         console.log("desc " + links[i].description);
       }
@@ -126,7 +187,9 @@ if (Meteor.isServer) {
 
      Meteor.methods({
 
+
         refreshFromBundle: function () {
+            Players.remove({});
             fetchQuizFromBundle();
         },
 
@@ -141,8 +204,8 @@ if (Meteor.isServer) {
 
 
 
-    if (Players.find().count() <= 100) {
-      
+    if (Players.find().count() < 20) {
+      Players.remove({});
     this.fetchQuizFromBundle("http://bitly.com/bundles/jennyyin/5");
 
       var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
