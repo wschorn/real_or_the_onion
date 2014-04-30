@@ -24,6 +24,32 @@ UI.registerHelper('nullZero', function( a ) {
     return Players.find({}, {sort: {real_score: -1, name: 1}});
   };
 
+
+Template.leaderboard.bestReal = function () {
+
+
+
+
+  };
+
+Template.leaderboard.bestOfType = function () {
+
+
+  if(Session.equals("selected_type", "real")){
+    return Players.find({}, {sort: {real_score: -1, name: 1}});
+
+  }
+
+  if(Session.equals("selected_type", "onion")){
+      return Players.find({}, {sort: {onion_score: -1, name: 1}});
+  }
+
+    return Players.find({}, {sort: {real_score: -1, name: 1}});
+
+
+  };
+
+
   Template.leaderboard.selected_name = function () {
     var article = Players.findOne(Session.get("selected_article"));
     return article && article.name;
@@ -33,12 +59,32 @@ UI.registerHelper('nullZero', function( a ) {
     return Session.equals("selected_article", this._id) ? "selected" : '';
   };
 
+    Template.type_tabs.selectedOnion = function () {
+    return Session.equals("selected_type", "onion") ? "selected" : '';
+  };
+
+      Template.type_tabs.selectedReal = function () {
+    return Session.equals("selected_type", "real") ? "selected" : '';
+  };
+
   Template.leaderboard.events({
     'click input.inc-real': function () {
       Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
     },
     'click input.inc-onion': function () {
       Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
+    }
+  });
+
+  Template.type_tabs.events({
+    'click input.tab_real': function () {
+      Session.set("selected_type", "real");
+    },
+    'click input.tab_onion': function () {
+      Session.set("selected_type", "onion");
+    },
+    'click input.tab_leader': function () {
+      Session.set("selected_type", "leader");
     },
   });
 
@@ -57,7 +103,7 @@ UI.registerHelper('nullZero', function( a ) {
 
       //hit the endpoint here
 
-      Players.insert({"title": "AN ARTICLE AHHH", real_score: 0});
+      Players.insert({"title": "AN ARTICLE AHHH", "description": desc, real_score: 0, onion_score: 0});
     }
   };
 }
@@ -96,15 +142,15 @@ if (Meteor.isServer) {
       console.log("adding: " + JSON.stringify(result.data.bundle));
 
       var links = result.data.bundle.links;
-
+      var previewHTML = ""; 
       for (var i = 0; i < links.length; i++){
 
         try {
         
         var preview = b.getPreviewHTML({link: links[i].link});
-        console.log("preview \n" + preview.data.content + "\n");
-        previewHTML = preview.data.content;
 
+        previewHTML = preview.data.content;
+        console.log("preview \n" + previewHTML + "\n");
           }
         catch(e){
             console.error("preview error: " + e);
@@ -160,7 +206,7 @@ if (Meteor.isServer) {
 
     if (Players.find().count() < 20) {
       Players.remove({});
-    this.fetchQuizFromBundle("http://bitly.com/bundles/nathaivel/9");
+    this.fetchQuizFromBundle("http://bitly.com/bundles/jennyyin/5");
 
       var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
 

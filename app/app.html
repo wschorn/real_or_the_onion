@@ -17,6 +17,7 @@
     </div> <!-- /container -->
 </header>
   <div id="outer" class="container">
+    {{> type_tabs }}
     {{> new_article }}
     {{> leaderboard}}
   </div>
@@ -25,11 +26,14 @@
 <template name="leaderboard">
   <div class="leaderboard">
     <ul class="art-ul">
-        {{#each articles}}
+        {{#each bestOfType}}
           {{> article}}
         {{/each}}
     </ul>
   </div>
+
+
+
 
   {{#if selected_name}}
   <div class="details">
@@ -46,6 +50,7 @@
   <div class="article {{selected}}">
     <a class="title-link" href={{long_url}}>{{title}}</a>
     <span class="description">{{description}}</span>
+    {{{previewHTML}}}
 
     <br>
 
@@ -67,3 +72,13 @@
     <input type="button" class="add roo-u-1-7" value="Add Player" />
   </div>
 </template>
+
+<template name="type_tabs">
+  <div class="type_tabs">
+    <input type="button" class="tab_real {{selectedReal}}" value="Best Real" />
+    <input type="button" class="tab_onion {{selectedOnion}}" value="Best Onion" />
+  </div>
+</template>
+
+
+

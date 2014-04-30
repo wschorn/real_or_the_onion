@@ -62,7 +62,15 @@ input[type=button] {
     -webkit-user-drag: none;
     -webkit-user-select: none;
     outline: none;
+
+
 }
+
+input[type=button].selected {
+    background-color: #00693F;
+
+}
+
 .new_article {
     text-align: center;
 }
