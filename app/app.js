@@ -146,19 +146,19 @@ if (Meteor.isServer) {
 
   var b = new Bitly(dummyUser, "throwaway1");
 
-
-
-
-
-  fetchQuizFromBundle =  function(bundleUrl) {
-    var newQuiz = {}
-      // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
      // b.getPreview = Meteor._wrapAsync(b.link.info);
      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
      b.getLinkInfo = Meteor._wrapAsync(b.info);
 
      b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
+
+
+
+  fetchQuizFromBundle =  function(bundleUrl) {
+    var newQuiz = {}
+      // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
+
 
      try {
       var result = b.bundleSync({bundle_link: bundleUrl});
@@ -191,15 +191,19 @@ if (Meteor.isServer) {
 
 
     insertFromLink = function (shortUrl) {
-      console.log("inserting: " + shortUrl);
+      console.log("inserting: " + JSON.stringify(shortUrl));
+
+
+
+
       try {
         var previewHTML;
-        var preview = b.getPreviewHTML({link: shortUrl});
+        var preview = b.getPreviewHTML({"link": shortUrl.link});
 
         if(preview.status_code == 200){
           previewHTML = preview.data.content;
         }else{
-          console.error("preview error: " + preview.status_txt);
+          console.error("preview error: " + JSON.stringify(shortUrl) + "\n gives \n" + preview.status_txt);
         }
 
        // console.log("\n HTML" + previewHTML);
@@ -214,7 +218,7 @@ if (Meteor.isServer) {
       try {
        var ts;
 
-        var ts_data = b.getLinkInfo({"shortUrl": shortUrl});
+        var ts_data = b.getLinkInfo({"shortUrl": shortUrl.link});
         var temp = JSON.stringify(ts_data);
         console.log("link info data for call: " + shortUrl + " was " + temp);
         if(ts_data.status_code == 200){
@@ -267,7 +271,8 @@ if (Meteor.isServer) {
 
 
           if(result.status_code == 200){
-            insertFromLink(result.data.bundle.links.pop().link);
+            var newLink = result.data.bundle.links.pop().link;
+            insertFromLink({link: newLink});
             console.log("Should be showing newly inserted link");
           }else{
 
