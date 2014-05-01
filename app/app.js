@@ -126,17 +126,11 @@ Template.leaderboard.bestOfType = function () {
 
       var new_article_name = document.getElementById("new_article_name").value;
       var desc = "a silly article";
-      var longLink = encodeURIComponent(new_article_name);
+      var longLink = new_article_name;
+      console.log("making" + longLink);
       var title;
       Meteor.call('fetchFromService', longLink, function(err, respJson) {
-        if (respJson.status_txt == "OK") {
-          new_article = respJson.data.bundle.links.pop();
-          title = new_article.title ? new_article.title : 'This article has no title';
-          title = title.replace("| The Onion - America's Finest News Source","");
-          Players.insert({"title": title, "description": desc, real_score: 0, onion_score: 0});
-          document.getElementById("new_article_name").value = " ";
-        }
-
+        console.log("really finished here")
       });
 
       //hit the endpoint here
@@ -167,6 +161,7 @@ if (Meteor.isServer) {
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
      // b.getPreview = Meteor._wrapAsync(b.link.info);
       b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
+      b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
 
       try {
         var result = b.bundleSync({bundle_link: bundleUrl});
@@ -176,31 +171,13 @@ if (Meteor.isServer) {
           console.error("fetch error: " + e);
         }
 
-      newMysterys = []
+      newMysterys = [];
 
       var links = result.data.bundle.links;
       var previewHTML = "";
       for (var i = 0; i < links.length; i++){
 
-        try {
-
-        var preview = b.getPreviewHTML({link: links[i].link});
-
-
-        if(preview.data.content != null)
-          previewHTML = preview.data.content;
-        else
-          previewHTML = "";
-        
-
-        console.log("\n HTML" + previewHTML);
-          }
-        catch(e){
-            console.error("preview error: " + e);
-          }
-
-
-        Players.insert({"title": links[i].title, "description": links[i].description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML});
+      insertFromLink(links[i]);      
 
       }
 
@@ -217,9 +194,28 @@ if (Meteor.isServer) {
      };
 
 
+     insertFromLink = function (link) {
+
+      try {
+        var previewHTML;
+        var preview = b.getPreviewHTML({link: link.link});
+
+        if(preview.data && preview.data.content != null)
+          previewHTML = preview.data.content;
+        
+        console.log("\n HTML" + previewHTML);
+          }
+        catch(e){
+            console.error("preview error: " + e);
+          }
+
+              Players.insert({"title": link.title, "description": link.description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML});
+     }
+
 
   Meteor.startup(function () {
 
+    var b1 = "https://bitly.com/bundles/wschornmeteor/1"
 
      Meteor.methods({
 
@@ -236,25 +232,27 @@ if (Meteor.isServer) {
 
         },
         fetchFromService: function(longLink) {
-        var url = "https://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
+        //var url = "http://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
         //synchronous GET
-        var result = Meteor.http.get(url, {timeout:30000});
-        if(result.statusCode==200) {
-          var respJson = JSON.parse(result.content);
-          console.log("response received.");
-          return respJson;
-        } else {
-          console.log("Response issue: ", result.statusCode);
-          var errorJson = JSON.parse(result.content);
-          throw new Meteor.Error(result.statusCode, errorJson.error);
-        }
+        var result = b.addToBundle({"link": longLink, "bundle_link": b1});
+  
+
+
+          //var respJson = JSON.parse(result.content);
+          console.log("response received for " + longLink + ", " + b1 + " :" + result.status_txt);
+
+          //insertFromLink(respJason);    
+
+
+          return "";
+        
       }
     });
 
 
     if (Players.find().count() < 20) {
       Players.remove({});
-    this.fetchQuizFromBundle("http://bitly.com/bundles/jennyyin/5");
+    this.fetchQuizFromBundle(b1);
 
       var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
 
