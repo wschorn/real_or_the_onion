@@ -69,6 +69,8 @@ Template.article.selected = function () {
 };
 
 Template.article.voted = function (){
+  if(Session.get("voted") == null) return false;
+
   return Session.get("voted").indexOf(this._id) >= 0;
 };
 Template.article.ts_ago = function (){
@@ -154,7 +156,7 @@ if (Meteor.isServer) {
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
      // b.getPreview = Meteor._wrapAsync(b.link.info);
      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
-     b.getLinkInfo = Meteor._wrapAsync(b.link.info);
+     b.getLinkInfo = Meteor._wrapAsync(b.info);
 
      b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
 
@@ -189,27 +191,54 @@ if (Meteor.isServer) {
 
 
     insertFromLink = function (link) {
-
+      console.log("inserting: " + link);
       try {
         var previewHTML;
         var preview = b.getPreviewHTML({link: link.link});
 
-        if(preview.data && preview.data.content != null)
+        if(preview.status_code == 200){
           previewHTML = preview.data.content;
+        }else{
+          console.error("preview error: " + preview.status_txt);
+        }
 
        // console.log("\n HTML" + previewHTML);
 
-        var ts;
-        var ts_data = b.getLinkInfo({link: link.link});
-        console.log("ts_data " + JSON.stringify(ts_data));
-        ts = ts_data.data.indexed;
+ 
 
       }
       catch(e){
-        console.error("preview error: " + e);
+        console.error("preview2 error: " + e);
       }
-      console.log("ts " + (ts));
-      Players.insert({"title": link.title, "description": link.description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
+
+      try {
+       var ts;
+        
+        var ts_data = b.getLinkInfo({"shortUrl": link.link});
+        var temp = JSON.stringify(ts_data);
+        console.log("link info data for call: " + link.link + " was " + temp);
+        if(ts_data.status_code == 200){
+        var ts_info = ts_data.data.info[0];
+        console.log("link info data ii " + ts_info);
+       
+        ts = ts_info.created_at;
+        var title = ts_info.title;
+        if(title == null){
+          title = "Untitled Story Happens";
+        }
+
+    }
+
+      }
+      catch(e){
+        console.error("link info error: " + e);
+      }
+
+
+
+
+
+      Players.insert({"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
     }
 
 
@@ -237,8 +266,12 @@ if (Meteor.isServer) {
         var result = b.addToBundle({"link": longLink, "bundle_link": b1});
 
 
-          if(result.data){
-            insertFromLink(result.data.links.link)
+          if(result.status_code == 200){
+            insertFromLink(result.data.bundle.links.pop().link);
+            console.log("Should be showing newly inserted link");
+          }else{
+        
+            console.error("fetchFromService error: " + JSON.stringify(result));
           }
         
       }
