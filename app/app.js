@@ -8,7 +8,7 @@ if (Meteor.isClient) {
 
    Meteor.startup(function () {
     Session.setDefault("voted", []);
-  });
+  });0
 
 UI.registerHelper('nullZero', function( a ) {
   a = a ? a : "0";
@@ -235,16 +235,7 @@ if (Meteor.isServer) {
         //var url = "http://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
         //synchronous GET
         var result = b.addToBundle({"link": longLink, "bundle_link": b1});
-  
 
-
-          //var respJson = JSON.parse(result.content);
-          console.log("response received for " + longLink + ", " + b1 + " :" + result.status_txt);
-
-          //insertFromLink(respJason);    
-
-
-          return "";
         
       }
     });
@@ -254,58 +245,7 @@ if (Meteor.isServer) {
       Players.remove({});
     this.fetchQuizFromBundle(b1);
 
-      var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
-
-      var mockup2 = {
-  "data": {
-    "bundle": {
-      "bundle_link": "http://bitly.com/bundles/bitlyapioauthdemo/1",
-      "bundle_owner": "bitlyapioauthdemo",
-      "created_ts": 1332175561,
-      "description": "",
-      "last_modified_ts": 1332177579,
-      "links": [
-        {
-          "aggregate_link": "http://bit.ly/xx2UTg",
-          "description": "Animated GIFs 4 Lyfe!",
-          "display_order": 0,
-          "link": "http://bit.ly/FWfWFP",
-          "long_url": "http://bukk.it/asdf.gif",
-          "title": "AAAAHHHH"
-        },
-        {
-          "aggregate_link": "http://bit.ly/K49Ze",
-          "description": "O LOOK IT'S KEYBOARD CAT",
-          "display_order": 1,
-          "link": "http://bit.ly/w8gWsd",
-          "long_url": "http://www.youtube.com/watch?v=J---aiyznGQ",
-          "title": "Keyboard Cat!"
-        }
-      ],
-      "private": false,
-      "title": "Here is a Bundle of Links!"
-    }
-  },
-  "status_code": 200,
-  "status_txt": "OK"
-};
-
-
-
-
-
-      var links = {};
-      console.log("ha " + links);
-      var names = ["Ada Lovelace",
-                   "Grace Hopper",
-                   "Marie Curie",
-                   "Carl Friedrich Gauss",
-                   "Nikola Tesla",
-                   "Claude Shannon"];
-      for (var i = 0; i < links.length; i++){
-        Players.upsert({"title": links[i].title, "description": links[i].description, "real_score": 0});
-        console.log("ha " + links[i]);
-      }
+    
 
     }
   });
