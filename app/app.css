@@ -40,6 +40,9 @@ a {
     color: #ee6123;
     text-decoration: none;
 }
+.tc {
+    text-align: center;
+}
 .right-margin {
     margin-right: 10px;
 }
@@ -69,6 +72,10 @@ input[type=button] {
 input[type=button].selected {
     background-color: #00693F;
 
+}
+
+input[type=button].gray {
+    background-color: #999;
 }
 
 .new_article {
