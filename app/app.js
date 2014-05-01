@@ -86,6 +86,10 @@ Template.type_tabs.selectedReal = function () {
   return Session.equals("selected_type", "real") ? "selected" : '';
 };
 
+Template.type_tabs.selectedLeader = function () {
+  return Session.equals("selected_type", "leader") ? "selected" : '';
+};
+
 Template.leaderboard.events({
   'click input.inc-real': function () {
     Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
@@ -191,10 +195,10 @@ if (Meteor.isServer) {
 
 
     insertFromLink = function (shortUrl) {
-      console.log("inserting: " + shortUrl);
+      console.log("inserting: " + shortUrl.link);
       try {
         var previewHTML;
-        var preview = b.getPreviewHTML({link: shortUrl});
+        var preview = b.getPreviewHTML({link: shortUrl.link});
 
         if(preview.status_code == 200){
           previewHTML = preview.data.content;
@@ -214,9 +218,9 @@ if (Meteor.isServer) {
       try {
        var ts;
 
-        var ts_data = b.getLinkInfo({"shortUrl": shortUrl});
+        var ts_data = b.getLinkInfo({"shortUrl": shortUrl.link});
         var temp = JSON.stringify(ts_data);
-        console.log("link info data for call: " + shortUrl + " was " + temp);
+        console.log("link info data for call: " + shortUrl.link + " was " + temp);
         if(ts_data.status_code == 200){
         var ts_info = ts_data.data.info[0];
         console.log("link info data ii " + ts_info);
@@ -267,7 +271,7 @@ if (Meteor.isServer) {
 
 
           if(result.status_code == 200){
-            insertFromLink(result.data.bundle.links.pop().link);
+            insertFromLink(result.data.bundle.links.pop());
             console.log("Should be showing newly inserted link");
           }else{
 

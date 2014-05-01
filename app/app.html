@@ -10,15 +10,13 @@
                 <img src="http://bitly.com/s/beta/graphics/unified/logo.png" alt="bitly">
             </a>
         </div>
-        <div class="roo-u-1-2 headroom">
-        <span class="right-margin mobile-hide">Take control of your links, <a href="https://bitly.com/a/sign_up" class="right-margin" target="_blank">sign up for free.</a></span>
-        <span class="pull-right"><a class="link" href="https://bitly.com/a/sign_in" target="_blank">Sign in</a></span>
+        <div class="roo-u-1-2">
+        {{> new_article }}
         </div>
     </div> <!-- /container -->
 </header>
   <div id="outer" class="container">
     {{> type_tabs }}
-    {{> new_article }}
     {{> leaderboard}}
   </div>
 </body>
@@ -51,12 +49,13 @@
 <template name="article">
   <li class="art-li">
   <div class="article {{selected}}">
-    <a class="title-link" href={{long_url}}>{{title}}</a> {{ts_ago}}
+    <a class="title-link" href={{long_url}}>{{title}}</a>
+    <p>{{ts_ago}}</p>
     <span class="description">{{description}}</span>
     {{{previewHTML}}}
     <br>
   </div>
-  <div class="voting">
+  <div class="voting tc">
     {{#if voted}}
     <span class="real_score">{{real_score}} real points</span>
     <span class="real_score">{{onion_score}} onion points</span>
@@ -73,15 +72,16 @@
 
 <template name="new_article">
   <div class="new_article roo-g-r">
-    <input id="new_article_name" type="text" class="roo-u-5-12" />
-    <input type="button" class="add roo-u-1-7" value="Add Player" />
+    <input id="new_article_name" type="text" class="roo-u-1-4" placeholder ="Please paste your link here"/>
+    <input type="button" class="add roo-u-1-7" value="Add New Article" />
   </div>
 </template>
 
 <template name="type_tabs">
-  <div class="type_tabs">
-    <input type="button" class="tab_real {{selectedReal}}" value="Best Real" />
-    <input type="button" class="tab_onion {{selectedOnion}}" value="Best Onion" />
+  <div class="type_tabs tc">
+    <input type="button" class="tab_real {{selectedReal}}" value="Sort by Best Real" />
+    <input type="button" class="tab_onion {{selectedOnion}}" value="Sort by Best Onion" />
+    <input type="button" class="tab_leader {{selectedLeader}}" value="Sort by Default" />
   </div>
 </template>
 
