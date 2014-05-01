@@ -176,7 +176,14 @@ if (Meteor.isServer) {
         
         var preview = b.getPreviewHTML({link: links[i].link});
 
-        previewHTML = preview.data.content;
+
+        if(preview.data.content != null)
+          previewHTML = preview.data.content;
+        else
+          previewHTML = "";
+        
+
+        console.log("\n HTML" + previewHTML);
           }
         catch(e){
             console.error("preview error: " + e);
