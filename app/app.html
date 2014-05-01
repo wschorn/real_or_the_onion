@@ -43,6 +43,9 @@
   {{else}}
   <div class="instructions">Click a article to select</div>
   {{/if}}
+
+
+
 </template>
 
 <template name="article">
@@ -51,17 +54,16 @@
     <a class="title-link" href={{long_url}}>{{title}}</a>
     <span class="description">{{description}}</span>
     {{{previewHTML}}}
-
+    <br>
   </div>
   <div class="voting">
-    <p>
-        <span class="real_score">{{real_score}} real points</span>
-        <span class="real_score">{{onion_score}} onion points</span>
-    </p>
-    <p class="tc">
-    {{#if selected}}<input type="button" class="inc-real {{real_score}}" value="This is Real!" />{{/if}}
-    {{#if selected}}<input type="button" class="inc-onion {{onion_score}} gray" value="This is Onion!" />{{/if}}
-    </p>
+    {{#if voted}}
+    <span class="real_score">{{real_score}} real points</span>
+    <span class="real_score">{{onion_score}} onion points</span>
+    {{else}}
+    <input type="button" class="inc-real {{real_score}}" value="This is Real!" />
+    <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
+    {{/if}}
 
   </div>
   </li>

@@ -6,11 +6,30 @@ Players = new Meteor.Collection("articles");
 
 if (Meteor.isClient) {
 
+   Meteor.startup(function () {
+    Session.setDefault("voted", []);
+  });
+
 UI.registerHelper('nullZero', function( a ) {
   a = a ? a : "0";
   return a;
 
 });
+
+voteInSession = function ( votingID ){
+var vTemp = Session.get("voted");
+        console.log("WTF VOTES " + vTemp);
+ 
+      if(vTemp.indexOf(votingID) >= 0){
+        console.log("WTF ALREADY VOTED ");
+
+      }else{
+        vTemp.push(votingID);
+      }
+      
+      Session.set("voted", vTemp);
+
+    }
 
 // var Bitly = Meteor.require("bitly-oauth");
 
@@ -44,7 +63,7 @@ Template.leaderboard.bestOfType = function () {
       return Players.find({}, {sort: {onion_score: -1, name: 1}});
   }
 
-    return Players.find({}, {sort: {real_score: -1, name: 1}});
+    return Players.find({}, {sort: {title: 1}});
 
 
   };
@@ -59,6 +78,11 @@ Template.leaderboard.bestOfType = function () {
     return Session.equals("selected_article", this._id) ? "selected" : '';
   };
 
+  Template.article.voted = function (){
+    return Session.get("voted").indexOf(this._id) >= 0;
+  };
+
+
     Template.type_tabs.selectedOnion = function () {
     return Session.equals("selected_type", "onion") ? "selected" : '';
   };
@@ -70,9 +94,13 @@ Template.leaderboard.bestOfType = function () {
   Template.leaderboard.events({
     'click input.inc-real': function () {
       Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
+      voteInSession(this._id);
+      
     },
     'click input.inc-onion': function () {
       Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
+      voteInSession(this._id);
+
     }
   });
 
@@ -149,7 +177,6 @@ if (Meteor.isServer) {
         }
 
       newMysterys = []
-      console.log("adding: " + JSON.stringify(result.data.bundle));
 
       var links = result.data.bundle.links;
       var previewHTML = "";
@@ -159,8 +186,14 @@ if (Meteor.isServer) {
 
         var preview = b.getPreviewHTML({link: links[i].link});
 
-        previewHTML = preview.data.content;
-        console.log("preview \n" + previewHTML + "\n");
+
+        if(preview.data.content != null)
+          previewHTML = preview.data.content;
+        else
+          previewHTML = "";
+        
+
+        console.log("\n HTML" + previewHTML);
           }
         catch(e){
             console.error("preview error: " + e);
@@ -169,12 +202,10 @@ if (Meteor.isServer) {
 
         Players.insert({"title": links[i].title, "description": links[i].description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML});
 
-        console.log("desc " + links[i].description);
       }
 
       for(var myLink in result.data.bundle.links){
         curr = result.data.bundle.links[myLink];
-        console.log("bundle link: " + curr);
         ng = {"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"};
 
         newMysterys.push(ng);
@@ -182,7 +213,6 @@ if (Meteor.isServer) {
       var rdb = result.data.bundle;
       //currently the user photo is stored in the description. this is janky, eventually we should perhaps pull the first link in the bundle?
       newQuiz = {user: rdb.bundle_owner, name: rdb.title, userPhoto: rdb.description, Mysterys: newMysterys, ts_modified: rdb.last_modified_ts};
-      console.log("NQ" + newQuiz);
       return newQuiz;
      };
 
