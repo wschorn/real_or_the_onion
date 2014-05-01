@@ -139,26 +139,19 @@ Template.new_article.events = {
 if (Meteor.isServer) {
 
 
-
-  var Bitly = Meteor.require("bitly-oauth");
-
-  var dummyUser = 'wschornmeteor';
-
-  var b = new Bitly(dummyUser, "throwaway1");
-
-
-
+    var Bitly = Meteor.require("bitly-oauth");
+    var dummyUser = 'wschornmeteor';
+    var b = new Bitly(dummyUser, "throwaway1");
+      b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
+     // b.getPreview = Meteor._wrapAsync(b.link.info);
+     b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
+     b.getLinkInfo = Meteor._wrapAsync(b.info);
+     b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
 
 
   fetchQuizFromBundle =  function(bundleUrl) {
     var newQuiz = {}
       // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
-      b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
-     // b.getPreview = Meteor._wrapAsync(b.link.info);
-     b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
-     b.getLinkInfo = Meteor._wrapAsync(b.info);
-
-     b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
 
      try {
       var result = b.bundleSync({bundle_link: bundleUrl});
@@ -191,15 +184,17 @@ if (Meteor.isServer) {
 
 
     insertFromLink = function (link) {
-      console.log("inserting: " + link);
+      console.log("inserting: " + JSON.stringify(link));
       try {
         var previewHTML;
-        var preview = b.getPreviewHTML({link: link.link});
+        var preview = b.getPreviewHTML({link: link.aggregate_link});
 
         if(preview.status_code == 200){
           previewHTML = preview.data.content;
+        //  console.error("preview passed: " + JSON.stringify(preview));
         }else{
-          console.error("preview error: " + preview.status_txt);
+          console.error("error getting preview for " + link.aggregate_link + " : " + JSON.stringify(preview));
+          return;
         }
 
        // console.log("\n HTML" + previewHTML);
@@ -216,7 +211,6 @@ if (Meteor.isServer) {
         
         var ts_data = b.getLinkInfo({"shortUrl": link.link});
         var temp = JSON.stringify(ts_data);
-        console.log("link info data for call: " + link.link + " was " + temp);
         if(ts_data.status_code == 200){
         var ts_info = ts_data.data.info[0];
         console.log("link info data ii " + ts_info);
@@ -233,9 +227,6 @@ if (Meteor.isServer) {
       catch(e){
         console.error("link info error: " + e);
       }
-
-
-
 
 
       Players.insert({"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
@@ -278,7 +269,7 @@ if (Meteor.isServer) {
     });
 
 
-    if (Players.find().count() < 20){
+    if (Players.find().count() >= 20){
       Players.remove({});
     this.fetchQuizFromBundle(b1);
 
