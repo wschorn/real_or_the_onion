@@ -190,11 +190,11 @@ if (Meteor.isServer) {
     };
 
 
-    insertFromLink = function (link) {
-      console.log("inserting: " + link);
+    insertFromLink = function (shortUrl) {
+      console.log("inserting: " + shortUrl);
       try {
         var previewHTML;
-        var preview = b.getPreviewHTML({link: link.link});
+        var preview = b.getPreviewHTML({link: shortUrl});
 
         if(preview.status_code == 200){
           previewHTML = preview.data.content;
@@ -204,7 +204,7 @@ if (Meteor.isServer) {
 
        // console.log("\n HTML" + previewHTML);
 
- 
+
 
       }
       catch(e){
@@ -213,14 +213,14 @@ if (Meteor.isServer) {
 
       try {
        var ts;
-        
-        var ts_data = b.getLinkInfo({"shortUrl": link.link});
+
+        var ts_data = b.getLinkInfo({"shortUrl": shortUrl});
         var temp = JSON.stringify(ts_data);
-        console.log("link info data for call: " + link.link + " was " + temp);
+        console.log("link info data for call: " + shortUrl + " was " + temp);
         if(ts_data.status_code == 200){
         var ts_info = ts_data.data.info[0];
         console.log("link info data ii " + ts_info);
-       
+
         ts = ts_info.created_at;
         var title = ts_info.title;
         if(title == null){
@@ -270,10 +270,10 @@ if (Meteor.isServer) {
             insertFromLink(result.data.bundle.links.pop().link);
             console.log("Should be showing newly inserted link");
           }else{
-        
+
             console.error("fetchFromService error: " + JSON.stringify(result));
           }
-        
+
       }
     });
 
