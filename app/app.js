@@ -111,8 +111,15 @@ Template.type_tabs.events({
   },
 });
 
+Template.article.shortlink
+
 Template.article.events({
-  'click': function () {
+  'click .remove': function () {
+    console.log(this);
+    Meteor.call('removeFromBundle', this._id, this.short_url);
+    Players.remove
+  },
+    'click': function () {
     Session.set("selected_article", this._id);
   }
 });
@@ -125,7 +132,7 @@ Template.new_article.events = {
     console.log("making" + longLink);
     var title;
     Meteor.call('fetchFromService', longLink, function(err, respJson) {
-      console.log("really finished here")
+      console.log("new_article_resp " + respJson);
     });
 
       //hit the endpoint here
@@ -152,6 +159,7 @@ if (Meteor.isServer) {
      b.getLinkInfo = Meteor._wrapAsync(b.info);
 
      b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
+     b.removeFromBundle = Meteor._wrapAsync(b.bundle.link_remove);
 
 
 
@@ -215,6 +223,8 @@ if (Meteor.isServer) {
         console.error("preview2 error: " + e);
       }
 
+
+      var ts_info;
       try {
        var ts;
 
@@ -222,7 +232,7 @@ if (Meteor.isServer) {
         var temp = JSON.stringify(ts_data);
         console.log("link info data for call: " + shortUrl + " was " + temp);
         if(ts_data.status_code == 200){
-        var ts_info = ts_data.data.info[0];
+        ts_info = ts_data.data.info[0];
         console.log("link info data ii " + ts_info);
 
         ts = ts_info.created_at;
@@ -230,6 +240,7 @@ if (Meteor.isServer) {
         if(title == null){
           title = "Untitled Story Happens";
         }
+         title = title.replace("| The Onion - America's Finest News Source","");
 
     }
 
@@ -240,9 +251,9 @@ if (Meteor.isServer) {
 
 
 
-
-
-      Players.insert({"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
+      var newArticleObj = {"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts, long_url: ts_info.long_url, short_url: ts_info.short_url};
+      console.log(newArticleObj);
+      Players.insert(newArticleObj);
     }
 
 
@@ -264,9 +275,18 @@ if (Meteor.isServer) {
         return 1 + foo;
 
       },
+      removeFromBundle: function(id, shortlink) {
+
+        var result = b.removeFromBundle({"bundle_link": b1, link: shortlink});
+        console.log("INPUT: " + b1 + " " + shortlink);
+        console.log(JSON.stringify(result));
+        Players.remove({_id: id});
+
+      },
       fetchFromService: function(longLink) {
         //var url = "http://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
         //synchronous GET
+
         var result = b.addToBundle({"link": longLink, "bundle_link": b1});
 
 

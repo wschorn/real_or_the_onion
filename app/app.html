@@ -51,7 +51,7 @@
 <template name="article">
   <li class="art-li">
   <div class="article {{selected}}">
-    <a class="title-link" href={{long_url}}>{{title}}</a> {{ts_ago}}
+    <a class="title-link" href="{{long_url}}">{{title}}</a> {{ts_ago}}
     <span class="description">{{description}}</span>
     {{{previewHTML}}}
     <br>
@@ -61,12 +61,12 @@
     <span class="real_score">{{real_score}} real points</span>
     <span class="real_score">{{onion_score}} onion points</span>
     <br/>
-        <a class="title-link" href={{long_url}}>Now Read it!</a>
+        <a href={{long_url}} class="reveal-title-link">Now Read it!</a>
     {{else}}
     <input type="button" class="inc-real {{real_score}}" value="This is Real!" />
     <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
     {{/if}}
-
+    <a class="remove">delete this</a>
   </div>
   </li>
 </template>
