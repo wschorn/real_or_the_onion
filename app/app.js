@@ -104,7 +104,9 @@ Template.leaderboard.bestOfType = function () {
         if (respJson.status_txt == "OK") {
           new_article = respJson.data.bundle.links.pop();
           title = new_article.title ? new_article.title : 'This article has no title';
+          title = title.replace("| The Onion - America's Finest News Source","");
           Players.insert({"title": title, "description": desc, real_score: 0, onion_score: 0});
+          document.getElementById("new_article_name").value = " ";
         }
 
       });
@@ -273,7 +275,7 @@ if (Meteor.isServer) {
                    "Nikola Tesla",
                    "Claude Shannon"];
       for (var i = 0; i < links.length; i++){
-        Players.insert({"title": links[i].title, "description": links[i].description, "real_score": 0});
+        Players.upsert({"title": links[i].title, "description": links[i].description, "real_score": 0});
         console.log("ha " + links[i]);
       }
 
