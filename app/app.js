@@ -69,6 +69,8 @@ Template.article.selected = function () {
 };
 
 Template.article.voted = function (){
+  if(Session.get("voted") == null) return false;
+  
   return Session.get("voted").indexOf(this._id) >= 0;
 };
 Template.article.ts_ago = function (){
