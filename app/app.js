@@ -6,19 +6,14 @@ Players = new Meteor.Collection("articles");
 
 if (Meteor.isClient) {
 
-
  Meteor.startup(function () {
   Session.setDefault("voted", []);
 });
 
- UI.registerHelper('nullZero', function( a ) {
-  a = a ? a : "0";
-  return a;
-
-});
-
  voteInSession = function ( votingID ){
   var vTemp = Session.get("voted");
+
+
   console.log("WTF VOTES " + vTemp);
 
   if(vTemp.indexOf(votingID) >= 0){
@@ -31,12 +26,6 @@ if (Meteor.isClient) {
   Session.set("voted", vTemp);
 
 }
-
-// var Bitly = Meteor.require("bitly-oauth");
-
-// var dummyUser = 'wschornmeteor';
-
-// var b = new Bitly(dummyUser, "throwaway1");
 
 
 Template.leaderboard.articles = function () {
@@ -64,7 +53,7 @@ Template.leaderboard.bestOfType = function () {
     return Players.find({}, {sort: {onion_score: -1, name: 1}});
   }
 
-  return Players.find({}, {sort: {title: 1}});
+  return Players.find({}, {sort: {ts: -1}});
 
 
 };
@@ -81,6 +70,9 @@ Template.article.selected = function () {
 
 Template.article.voted = function (){
   return Session.get("voted").indexOf(this._id) >= 0;
+};
+Template.article.ts_ago = function (){
+  return moment((this.ts * 1000)).fromNow()
 };
 
 
@@ -217,7 +209,7 @@ if (Meteor.isServer) {
         console.error("preview error: " + e);
       }
       console.log("ts " + (ts));
-      Players.insert({"title": link.title, "description": link.description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": moment((ts * 1000)).fromNow()});
+      Players.insert({"title": link.title, "description": link.description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
     }
 
 
@@ -246,7 +238,7 @@ if (Meteor.isServer) {
 
 
           if(result.data){
-            insertFromLink(reseult.data.links.link)
+            insertFromLink(result.data.links.link)
           }
         
       }
