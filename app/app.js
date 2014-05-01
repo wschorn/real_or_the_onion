@@ -10,14 +10,10 @@ if (Meteor.isClient) {
   Session.setDefault("voted", []);
 });
 
- UI.registerHelper('nullZero', function( a ) {
-  a = a ? a : "0";
-  return a;
-
-});
-
  voteInSession = function ( votingID ){
   var vTemp = Session.get("voted");
+
+
   console.log("WTF VOTES " + vTemp);
 
   if(vTemp.indexOf(votingID) >= 0){
@@ -30,12 +26,6 @@ if (Meteor.isClient) {
   Session.set("voted", vTemp);
 
 }
-
-// var Bitly = Meteor.require("bitly-oauth");
-
-// var dummyUser = 'wschornmeteor';
-
-// var b = new Bitly(dummyUser, "throwaway1");
 
 
 Template.leaderboard.articles = function () {
@@ -63,7 +53,7 @@ Template.leaderboard.bestOfType = function () {
     return Players.find({}, {sort: {onion_score: -1, name: 1}});
   }
 
-  return Players.find({}, {sort: {title: 1}});
+  return Players.find({}, {sort: {ts: -1}});
 
 
 };
@@ -80,6 +70,9 @@ Template.article.selected = function () {
 
 Template.article.voted = function (){
   return Session.get("voted").indexOf(this._id) >= 0;
+};
+Template.article.ts_ago = function (){
+  return moment((this.ts * 1000)).fromNow()
 };
 
 
@@ -161,6 +154,8 @@ if (Meteor.isServer) {
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
      // b.getPreview = Meteor._wrapAsync(b.link.info);
      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
+     b.getLinkInfo = Meteor._wrapAsync(b.link.info);
+
      b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
 
      try {
@@ -176,7 +171,6 @@ if (Meteor.isServer) {
     var links = result.data.bundle.links;
     var previewHTML = "";
     for (var i = 0; i < links.length; i++){
-
       insertFromLink(links[i]);
 
     }
@@ -203,13 +197,19 @@ if (Meteor.isServer) {
         if(preview.data && preview.data.content != null)
           previewHTML = preview.data.content;
 
-        console.log("\n HTML" + previewHTML);
+       // console.log("\n HTML" + previewHTML);
+
+        var ts;
+        var ts_data = b.getLinkInfo({link: link.link});
+        console.log("ts_data " + JSON.stringify(ts_data));
+        ts = ts_data.data.indexed;
+
       }
       catch(e){
         console.error("preview error: " + e);
       }
-
-      Players.insert({"title": link.title, "description": link.description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML});
+      console.log("ts " + (ts));
+      Players.insert({"title": link.title, "description": link.description, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
     }
 
 
@@ -237,76 +237,19 @@ if (Meteor.isServer) {
         var result = b.addToBundle({"link": longLink, "bundle_link": b1});
 
 
-
-          //var respJson = JSON.parse(result.content);
-          console.log("response received for " + longLink + ", " + b1 + " :" + result.status_txt);
-
-          //insertFromLink(respJason);
-
-
-          return "";
-
-        }
-      });
-
-
-      if (Players.find().count() < 20) {
-        Players.remove({});
-        this.fetchQuizFromBundle(b1);
-
-        var mockup1 = [{"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"}];
-
-        var mockup2 = {
-          "data": {
-            "bundle": {
-              "bundle_link": "http://bitly.com/bundles/bitlyapioauthdemo/1",
-              "bundle_owner": "bitlyapioauthdemo",
-              "created_ts": 1332175561,
-              "description": "",
-              "last_modified_ts": 1332177579,
-              "links": [
-              {
-                "aggregate_link": "http://bit.ly/xx2UTg",
-                "description": "Animated GIFs 4 Lyfe!",
-                "display_order": 0,
-                "link": "http://bit.ly/FWfWFP",
-                "long_url": "http://bukk.it/asdf.gif",
-                "title": "AAAAHHHH"
-              },
-              {
-                "aggregate_link": "http://bit.ly/K49Ze",
-                "description": "O LOOK IT'S KEYBOARD CAT",
-                "display_order": 1,
-                "link": "http://bit.ly/w8gWsd",
-                "long_url": "http://www.youtube.com/watch?v=J---aiyznGQ",
-                "title": "Keyboard Cat!"
-              }
-              ],
-              "private": false,
-              "title": "Here is a Bundle of Links!"
-            }
-          },
-          "status_code": 200,
-          "status_txt": "OK"
-        };
-
-
-
-
-
-        var links = {};
-        console.log("ha " + links);
-        var names = ["Ada Lovelace",
-        "Grace Hopper",
-        "Marie Curie",
-        "Carl Friedrich Gauss",
-        "Nikola Tesla",
-        "Claude Shannon"];
-        for (var i = 0; i < links.length; i++){
-          Players.upsert({"title": links[i].title, "description": links[i].description, "real_score": 0});
-          console.log("ha " + links[i]);
-        }
-
+          if(result.data){
+            insertFromLink(result.data.links.link)
+          }
+        
       }
     });
+
+
+    if (Players.find().count() < 20){
+      Players.remove({});
+    this.fetchQuizFromBundle(b1);
+
+    }
+  });
+
 }
