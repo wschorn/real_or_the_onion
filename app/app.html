@@ -29,11 +29,13 @@
     <span class="scorebottom">{{currentScore}} /   {{currentScoreVotes}}</span> 
   </div>
   {{#if searchString}}
-      Already submitted {{searchString}}:
+      <div class="error tc headroom">Already submitted</div>
+      <ul class="art-ul">
         {{#each searchResults}}
           {{> article}}
         {{/each}}
         more stories:
+       </ul>
     {{/if}}
 
   <div class="leaderboard">
@@ -72,19 +74,19 @@
 
     <div class="vote_result">
      {{#if votedRightOnion}}
-    <img class="reaction" src="/react2.png">
+    <img class="reaction pulse" src="/react2.png">
     <div class="roo-u-2-3 headroom">Phew! Yup, this is TheOnion.com</div>
      {{/if}}
     {{#if votedRightReal}}
-    <img class="reaction" src="/react3.png">
+    <img class="reaction pulse" src="/react3.png">
     <div class="roo-u-2-3 headroom">Uh, yeah! This is a 'Real' News Article</div>
     {{/if}}
      {{#if votedWrongOnion}}
-    <img class="reaction" src="/react4.png">
+    <img class="reaction pullDown" src="/react4.png">
     <div class="roo-u-2-3 headroom">Wut. This is real news!</div>
      {{/if}}
     {{#if votedWrongReal}}
-    <img class="reaction" src="/react1.png">
+    <img class="reaction pullDown" src="/react1.png">
     <div class="roo-u-2-3 headroom">Oh man! This is actually TheOnion.com</div>
      {{/if}}
 
@@ -97,7 +99,7 @@
   <div class="new_article roo-g-r">
     <input id="new_article_name" type="text" class="roo-u-1-4" placeholder ="Please paste your link here"/>
     <input type="button" class="add roo-u-1-7" value="Add New Article" />
-    <input type="button" class="clear roo-u-1-1" value="x" />
+    <input type="button" class="clear roo-u-1-1 gray" value="x" />
   </div>
 </template>
 
