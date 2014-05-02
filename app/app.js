@@ -151,7 +151,7 @@ Template.article.shortlink
 
 Template.article.events({
   'click .remove': function () {
-    console.log(this);
+    console.log(this + "\n oooooo \n " + this._id + this.short_url);
     Meteor.call('removeFromBundle', this._id, this.short_url);
     Players.remove
   },
