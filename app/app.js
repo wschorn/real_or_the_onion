@@ -442,7 +442,7 @@ if (Meteor.isServer) {
     });
 
 
-    if (Players.find().count() < 20){
+    if (Players.find().count() < 30){
       Players.remove({});
     this.fetchQuizFromBundle(b1);
 
