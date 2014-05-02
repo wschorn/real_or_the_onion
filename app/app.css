@@ -92,6 +92,7 @@ input[type=button].gray {
 .article {
     cursor: pointer;
     padding: 5px;
+    margin-bottom: 10px;
 }
 .title-link {
     font-size: 24px;
@@ -134,6 +135,14 @@ li.art-li:first-child {
     float: right;
 }
 
+.reaction {
+    max-height: 100px;
+    max-width: 100px;
+    position: relative;
+    top: -30px;
+    left: -50px;
+}
+
 .article.correct {
     background-color: #e3f8eb;
     color: #00693F !important;
@@ -153,6 +162,10 @@ li.art-li:first-child {
 .voting {
     height: 50px;
     padding: 10px;
+}
+
+.vote_result {
+    vertical-align: top;
 }
 
 .details, .none {

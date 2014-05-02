@@ -56,8 +56,8 @@
     {{#if voted}}
     <span class="real_score">{{real_score}} real points</span>
     <span class="real_score">{{onion_score}} onion points</span>
+    <a href={{long_url}} class="reveal-title-link">Read it!</a>
     <br/>
-        <a href={{long_url}} class="reveal-title-link">Now Read it!</a>
     {{else}}
     <input type="button" class="inc-real {{real_score}}" value="This is Real!" />
     <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
@@ -68,21 +68,22 @@
 
     <div class="vote_result">
      {{#if votedRightOnion}}
+    <img class="reaction" src="/react2.png">
     Phew! Yup, this is TheOnion.com
      {{/if}}
-
     {{#if votedRightReal}}
+    <img class="reaction" src="/react3.png">
     Uh, yeah! This is a 'Real' News Article
-     {{/if}}
-
-
+    {{/if}}
      {{#if votedWrongOnion}}
-    Dang! This is real news! 
+    <img class="reaction" src="/react4.png">
+    Wut. This is real news! 
+     {{/if}}
+    {{#if votedWrongReal}}
+    <img class="reaction" src="/react1.png">
+    Oh man! This is actually TheOnion.com 
      {{/if}}
 
-    {{#if votedWrongReal}}
-    Don't worry! This is actually TheOnion.com 
-     {{/if}}
       </div>
   </div>
   </li>
