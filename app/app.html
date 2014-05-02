@@ -21,7 +21,21 @@
   </div>
 </body>
 
+
+
 <template name="leaderboard">
+  <div class="scoreCounter">
+    <span>Score:</span> 
+    {{currentScore}} /   {{currentScoreVotes}}
+  </div>
+  {{#if searchString}}
+      Already submitted {{searchString}}: 
+        {{#each searchResults}}
+          {{> article}}
+        {{/each}}
+        more stories:
+    {{/if}}
+
   <div class="leaderboard">
     <ul class="art-ul">
         {{#each bestOfType}}
@@ -30,26 +44,13 @@
     </ul>
   </div>
 
-
-
-
-  {{#if selected_name}}
-  <div class="details">
-    <div class="name">{{selected_name}}</div>
-    <input type="button" class="inc" value="Give 5 points" />
-  </div>
-  {{else}}
-  <div class="instructions">Click a article to select</div>
-  {{/if}}
-
-
-
 </template>
 
 <template name="article">
   <li class="art-li">
-  <div class="article {{selected}}">
-    <a class="title-link" href={{long_url}}>{{title}}</a>
+  <div id="{{_id}}" class="article {{selected}} {{#if votedRight}}correct{{/if}} {{#if votedWrong}}incorrect{{/if}}">
+    <a class="remove">delete</a>
+    <a class="title-link" href="{{short_url}}">{{title}}</a>
     <p>{{ts_ago}}</p>
     <span class="description">{{description}}</span>
     {{{previewHTML}}}
@@ -59,13 +60,35 @@
     {{#if voted}}
     <span class="real_score">{{real_score}} real points</span>
     <span class="real_score">{{onion_score}} onion points</span>
+    <a href={{long_url}} class="reveal-title-link">Read it!</a>
     <br/>
-        <a class="title-link" href={{long_url}}>Now Read it!</a>
     {{else}}
     <input type="button" class="inc-real {{real_score}}" value="This is Real!" />
     <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
     {{/if}}
 
+    
+     
+
+    <div class="vote_result">
+     {{#if votedRightOnion}}
+    <img class="reaction" src="/react2.png">
+    Phew! Yup, this is TheOnion.com
+     {{/if}}
+    {{#if votedRightReal}}
+    <img class="reaction" src="/react3.png">
+    Uh, yeah! This is a 'Real' News Article
+    {{/if}}
+     {{#if votedWrongOnion}}
+    <img class="reaction" src="/react4.png">
+    Wut. This is real news! 
+     {{/if}}
+    {{#if votedWrongReal}}
+    <img class="reaction" src="/react1.png">
+    Oh man! This is actually TheOnion.com 
+     {{/if}}
+
+      </div>
   </div>
   </li>
 </template>
@@ -74,6 +97,7 @@
   <div class="new_article roo-g-r">
     <input id="new_article_name" type="text" class="roo-u-1-4" placeholder ="Please paste your link here"/>
     <input type="button" class="add roo-u-1-7" value="Add New Article" />
+    <input type="button" class="clear roo-u-1-1" value="x" />
   </div>
 </template>
 

@@ -72,6 +72,8 @@ input[type=button].selected {
 
 }
 
+
+
 input[type=button].gray {
     background-color: #999;
 }
@@ -90,6 +92,7 @@ input[type=button].gray {
 .article {
     cursor: pointer;
     padding: 5px;
+    margin-bottom: 10px;
 }
 .title-link {
     font-size: 24px;
@@ -128,10 +131,35 @@ li.art-li:first-child {
     font-size: 1.75em;
 }
 
-.article.selected {
+.remove {
+    float: right;
+}
+
+.reaction {
+    max-height: 100px;
+    max-width: 100px;
+    position: relative;
+    top: -30px;
+    left: -50px;
+}
+
+.scoreCounter {
+    position: fixed;
+    top: 100px;
+    left: 100px;
+    padding: 10px;
+}
+
+.article.correct {
     background-color: #e3f8eb;
     color: #00693F !important;
 }
+
+.article.incorrect {
+    background-color: #f8e3eb;
+    color: #3F6900 !important;
+}
+
 
 .article.selected .score {
     color: black;
@@ -141,6 +169,10 @@ li.art-li:first-child {
 .voting {
     height: 50px;
     padding: 10px;
+}
+
+.vote_result {
+    vertical-align: top;
 }
 
 .details, .none {

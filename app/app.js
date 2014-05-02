@@ -8,11 +8,15 @@ if (Meteor.isClient) {
 
  Meteor.startup(function () {
   Session.setDefault("voted", []);
+  Session.set("vote_count", 0);
 });
 
  voteInSession = function ( votingID ){
   var vTemp = Session.get("voted");
 
+  var vCount = Session.get("vote_count");
+  vCount++;
+  Session.set("vote_count", vCount);
 
   console.log("WTF VOTES " + vTemp);
 
@@ -21,6 +25,9 @@ if (Meteor.isClient) {
 
   }else{
     vTemp.push(votingID);
+
+
+
   }
 
   Session.set("voted", vTemp);
@@ -40,6 +47,20 @@ Template.leaderboard.bestReal = function () {
 
 
 };
+Template.leaderboard.searchString = function () {
+  return Session.get("searching");
+}
+
+Template.leaderboard.searchResults = function () {
+  var s = Session.get("searching");
+  if(s != null){
+
+    return Players.find({long_url: s}, {sort: {long_url: -1}});
+
+
+  }
+
+}
 
 Template.leaderboard.bestOfType = function () {
 
@@ -57,6 +78,60 @@ Template.leaderboard.bestOfType = function () {
 
 
 };
+
+  getPlayer = function(id) {
+    var p = Players.findOne({_id: id});
+    if(p != null){
+      console.log("p" + p);
+    }else{
+      console.error("NO P:" + id);
+    }
+    return p;
+}
+
+  getIsOnion = function(id) {
+    var p = Players.findOne({_id: id});
+    return (p.long_url.indexOf(".theonion.com") > -1);
+}
+
+Template.leaderboard.currentScoreVotes = function () {
+  return Session.get("vote_count");
+};
+
+Template.leaderboard.currentScore = function () {
+  var pTemp;
+  var s = 0;
+  if(Session.equals("selected_type", "real")){
+     pTemp = Players.find({}, {sort: {real_score: -1, name: 1}});
+
+  }else if(Session.equals("selected_type", "onion")){
+     pTemp = Players.find({}, {sort: {onion_score: -1, name: 1}});
+  }else{
+
+   pTemp = Players.find({}, {sort: {ts: -1}});
+  }
+  pTemp.forEach(function(player){
+    
+    var isOnion = getIsOnion(player._id);
+    var didVoteOnion = Session.equals("vote_" + player._id, "ONION");
+    var didVoteReal = Session.equals("vote_" + player._id, "REAL");
+
+  console.log("isOnion "+ isOnion);
+   console.log("isOnion "+ didVoteOnion);
+   console.log("didvotereal " + didVoteReal);
+    if(didVoteReal || didVoteOnion){
+      console.log("voted " + player._id);
+      //we did vote
+      if(   (isOnion && didVoteOnion) || (!isOnion && didVoteReal)   ){
+        s++;
+      }
+    }
+  });
+
+  return s;
+
+};
+
 
 
 Template.leaderboard.selected_name = function () {
@@ -77,6 +152,48 @@ Template.article.ts_ago = function (){
   return moment((this.ts * 1000)).fromNow()
 };
 
+Template.article.sessionVote = function (){
+  return Session.get("vote_" + this._id)
+};
+
+Template.article.articleType = function (){
+  if(this.long_url.indexOf(".theonion.com") >= 0)
+    return "ONION"
+  return "REAL"
+};
+
+Template.article.votedOnion = function (){
+  return Session.equals("vote_" + this._id, "ONION")
+};
+
+Template.article.votedReal = function (){
+  return Session.equals("vote_" + this._id, "REAL")
+};
+
+
+Template.article.votedRight = function (){
+  return (Session.equals("vote_" + this._id, "ONION") && (this.long_url.indexOf(".theonion.com") >= 0)) || (Session.equals("vote_" + this._id, "REAL") && !(this.long_url.indexOf(".theonion.com") >= 0));
+};
+
+Template.article.votedWrong = function (){
+  return (Session.equals("vote_" + this._id, "ONION") && !(this.long_url.indexOf(".theonion.com") >= 0)) || (Session.equals("vote_" + this._id, "REAL") && (this.long_url.indexOf(".theonion.com") >= 0));
+};
+
+Template.article.votedRightOnion = function (){
+  return Session.equals("vote_" + this._id, "ONION") && (this.long_url.indexOf(".theonion.com") >= 0);
+};
+
+Template.article.votedRightReal = function (){
+  return Session.equals("vote_" + this._id, "REAL") && !(this.long_url.indexOf(".theonion.com") >= 0);
+};
+
+Template.article.votedWrongOnion = function (){
+  return Session.equals("vote_" + this._id, "ONION") && !(this.long_url.indexOf(".theonion.com") >= 0);
+};
+
+Template.article.votedWrongReal = function (){
+  return Session.equals("vote_" + this._id, "REAL") && (this.long_url.indexOf(".theonion.com") >= 0);
+};
 
 Template.type_tabs.selectedOnion = function () {
   return Session.equals("selected_type", "onion") ? "selected" : '';
@@ -86,19 +203,26 @@ Template.type_tabs.selectedReal = function () {
   return Session.equals("selected_type", "real") ? "selected" : '';
 };
 
+
+
 Template.type_tabs.selectedLeader = function () {
   return Session.equals("selected_type", "leader") ? "selected" : '';
 };
 
+
+
+
 Template.leaderboard.events({
   'click input.inc-real': function () {
-    Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
+    Players.update(Session.get("selected_article"), {$inc: {real_score: 1}});
     voteInSession(this._id);
+    Session.set("vote_" + this._id, "REAL")
 
   },
   'click input.inc-onion': function () {
-    Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
+    Players.update(Session.get("selected_article"), {$inc: {onion_score: 1}});
     voteInSession(this._id);
+    Session.set("vote_" + this._id, "ONION")
 
   }
 });
@@ -115,12 +239,23 @@ Template.type_tabs.events({
   },
 });
 
+Template.article.shortlink
+
 Template.article.events({
-  'click': function () {
+  'click .remove': function () {
+    console.log(this + "\n oooooo \n " + this._id + this.short_url);
+    Meteor.call('removeFromBundle', this._id, this.short_url);
+    Players.remove
+  },
+    'click': function () {
     Session.set("selected_article", this._id);
   }
 });
 Template.new_article.events = {
+  'click input.clear': function () {
+      console.log("CLEAR");
+        Session.set("searching", "");
+  },
   'click input.add': function () {
 
     var new_article_name = document.getElementById("new_article_name").value;
@@ -128,8 +263,11 @@ Template.new_article.events = {
     var longLink = new_article_name;
     console.log("making" + longLink);
     var title;
+    Session.set("searching", longLink)
+
+
     Meteor.call('fetchFromService', longLink, function(err, respJson) {
-      console.log("really finished here")
+      console.log("new_article_resp " + respJson);
     });
 
       //hit the endpoint here
@@ -150,19 +288,20 @@ if (Meteor.isServer) {
 
   var b = new Bitly(dummyUser, "throwaway1");
 
-
-
-
-
-  fetchQuizFromBundle =  function(bundleUrl) {
-    var newQuiz = {}
-      // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
       b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
      // b.getPreview = Meteor._wrapAsync(b.link.info);
      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
      b.getLinkInfo = Meteor._wrapAsync(b.info);
 
      b.addToBundle = Meteor._wrapAsync(b.bundle.link_add);
+     b.removeFromBundle = Meteor._wrapAsync(b.bundle.link_remove);
+
+
+
+  fetchQuizFromBundle =  function(bundleUrl) {
+    var newQuiz = {}
+      // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
+
 
      try {
       var result = b.bundleSync({bundle_link: bundleUrl});
@@ -194,16 +333,17 @@ if (Meteor.isServer) {
     };
 
 
-    insertFromLink = function (shortUrl) {
-      console.log("inserting: " + shortUrl.link);
+    insertFromLink = function (linkObject) {
+      console.log("inserting: " + JSON.stringify(linkObject));
+
       try {
         var previewHTML;
-        var preview = b.getPreviewHTML({link: shortUrl.link});
+        var preview = b.getPreviewHTML({"link": linkObject.link});
 
         if(preview.status_code == 200){
           previewHTML = preview.data.content;
         }else{
-          console.error("preview error: " + preview.status_txt);
+          console.error("preview error: " + JSON.stringify(linkObject) + "\n gives \n" + preview.status_txt);
         }
 
        // console.log("\n HTML" + previewHTML);
@@ -215,14 +355,16 @@ if (Meteor.isServer) {
         console.error("preview2 error: " + e);
       }
 
+
+      var ts_info;
       try {
        var ts;
 
-        var ts_data = b.getLinkInfo({"shortUrl": shortUrl.link});
+        var ts_data = b.getLinkInfo({"shortUrl": linkObject.link});
         var temp = JSON.stringify(ts_data);
-        console.log("link info data for call: " + shortUrl.link + " was " + temp);
+        console.log("link info data for call: " + JSON.stringify(linkObject) + " was " + temp);
         if(ts_data.status_code == 200){
-        var ts_info = ts_data.data.info[0];
+        ts_info = ts_data.data.info[0];
         console.log("link info data ii " + ts_info);
 
         ts = ts_info.created_at;
@@ -230,6 +372,7 @@ if (Meteor.isServer) {
         if(title == null){
           title = "Untitled Story Happens";
         }
+         title = title.replace("| The Onion - America's Finest News Source","");
 
     }
 
@@ -240,9 +383,9 @@ if (Meteor.isServer) {
 
 
 
-
-
-      Players.insert({"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts});
+      var newArticleObj = {"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts, long_url: linkObject.long_url, short_url: linkObject.link};
+      console.log(newArticleObj);
+      Players.insert(newArticleObj);
     }
 
 
@@ -264,14 +407,24 @@ if (Meteor.isServer) {
         return 1 + foo;
 
       },
+      removeFromBundle: function(id, shortlink) {
+
+        var result = b.removeFromBundle({"bundle_link": b1, link: shortlink});
+        console.log("INPUT: " + b1 + " " + shortlink);
+        console.log(JSON.stringify(result));
+        Players.remove({_id: id});
+
+      },
       fetchFromService: function(longLink) {
         //var url = "http://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
         //synchronous GET
+
         var result = b.addToBundle({"link": longLink, "bundle_link": b1});
 
 
           if(result.status_code == 200){
-            insertFromLink(result.data.bundle.links.pop());
+            var newLink = result.data.bundle.links.pop().link;
+            insertFromLink({link: newLink, long_url: longLink});
             console.log("Should be showing newly inserted link");
           }else{
 
