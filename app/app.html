@@ -5,7 +5,7 @@
 <body>
 <header class="page-head">
     <div class="container roo-g-r">
-        <div class="roo-u-1-2">
+        <div class="roo-u-1-3">
             <a class="site-logo" href="https://bitly.com/" title="bitly">
                 <img src="http://bitly.com/s/beta/graphics/unified/logo.png" alt="bitly">
             </a>
@@ -29,7 +29,7 @@
     <span class="scorebottom">{{currentScore}} /   {{currentScoreVotes}}</span> 
   </div>
   {{#if searchString}}
-      Already submitted {{searchString}}: 
+      Already submitted {{searchString}}:
         {{#each searchResults}}
           {{> article}}
         {{/each}}
@@ -49,7 +49,7 @@
 <template name="article">
   <li class="art-li">
   <div id="{{_id}}" class="article {{selected}} {{#if votedRight}}correct{{/if}} {{#if votedWrong}}incorrect{{/if}}">
-    <a class="remove">delete</a>
+    <a class="remove">X</a>
     <a class="title-link" href="{{short_url}}">{{title}}</a>
     <p>{{ts_ago}}</p>
     <span class="description">{{description}}</span>
@@ -67,8 +67,8 @@
     <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
     {{/if}}
 
-    
-     
+
+
 
     <div class="vote_result">
      {{#if votedRightOnion}}
@@ -81,11 +81,11 @@
     {{/if}}
      {{#if votedWrongOnion}}
     <img class="reaction" src="/react4.png">
-    Wut. This is real news! 
+    Wut. This is real news!
      {{/if}}
     {{#if votedWrongReal}}
     <img class="reaction" src="/react1.png">
-    Oh man! This is actually TheOnion.com 
+    Oh man! This is actually TheOnion.com
      {{/if}}
 
       </div>
