@@ -84,6 +84,30 @@ input[type=button].gray {
     font-size: 14px;
 }
 
+.vote_button {
+    padding: 20px 20px !important;
+    width: 225px;
+    height: 65px;
+}
+
+.vote_button.inc-real{
+    background-image:url('real-news-logo.png');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    text-indent: 30px;
+}
+
+.vote_button.inc-onion{
+
+    background-color: #008d52;
+    color: #fff;
+    background-image:url('the-onion-logo.png');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    text-indent: 20px;
+    
+}
+
 .type_tabs input[type=button].selected {
     background-color: #0078e7;
     color: #fff;
@@ -204,11 +228,11 @@ li.art-li:first-child {
 
 
 .voting {
-    height: 50px;
-    padding: 10px;
+    height: 60px;
+    padding: 5px;
 }
 .voting input {
-    font-size: 14px;
+    font-size: 20px;
 }
 
 .vote_result {
