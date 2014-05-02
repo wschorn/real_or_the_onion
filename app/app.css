@@ -79,9 +79,33 @@ input[type=button].gray {
 }
 .type_tabs input[type=button] {
     background-color: #fff;
-    color: #232323;
+    color: #0078e7;
     border: 1px solid #0078e7;
     font-size: 14px;
+}
+
+.vote_button {
+    padding: 20px 20px !important;
+    width: 225px;
+    height: 65px;
+}
+
+.vote_button.inc-real{
+    background-image:url('real-news-logo.png');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    text-indent: 30px;
+}
+
+.vote_button.inc-onion{
+
+    background-color: #008d52;
+    color: #fff;
+    background-image:url('the-onion-logo.png');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    text-indent: 20px;
+    
 }
 
 .type_tabs input[type=button].selected {
@@ -148,10 +172,44 @@ li.art-li:first-child {
 
 .scoreCounter {
     position: fixed;
-    top: 100px;
-    left: 100px;
+    top: 160px;
+    left: 25px;
     padding: 10px;
+
+
+
+
 }
+
+.scoreCounter > span {
+    display: block;
+    width: 100px;
+    text-align: center;
+    padding: 10px;
+    border: 0px;
+    font-weight: 400;
+    font-size: 22px;
+        
+    }
+
+    .scoretop {
+        background-color: #b8b8b9;
+        border-color: #b8b8b9;
+        color: #fff;
+        border: 1px solid;
+        border-width: 1px 1px 0px 1px;
+        border-radius: 4px 4px 0px 0px;
+    }
+
+    .scorebottom {
+               background-color: #fff;
+        border-color: #b8b8b9;
+        color: #b8b8b9; 
+        border-width: 0px;
+        border-radius: 0px 0px 4px 4px;
+        box-shadow: 0px 2px 2px #aaa;
+
+    }
 
 .article.correct {
     background-color: #e3f8eb;
@@ -170,11 +228,11 @@ li.art-li:first-child {
 
 
 .voting {
-    height: 50px;
-    padding: 10px;
+    height: 60px;
+    padding: 5px;
 }
 .voting input {
-    font-size: 14px;
+    font-size: 20px;
 }
 
 .vote_result {
