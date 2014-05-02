@@ -188,8 +188,9 @@ Template.article.events({
   }
 });
 Template.new_article.events = {
-  'click .clear': function () {
-        Session.set("searching", null);
+  'click input.clear': function () {
+      console.log("CLEAR");
+        Session.set("searching", "");
   },
   'click input.add': function () {
 
