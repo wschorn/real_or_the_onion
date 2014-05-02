@@ -50,7 +50,7 @@
 
 <template name="article">
   <li class="art-li">
-  <div class="article {{selected}}">
+  <div class="article {{selected}} {{#if votedRight}}correct{{/if}} {{#if votedWrong}}incorrect{{/if}}">
     <a class="title-link" href="{{long_url}}">{{title}}</a> {{ts_ago}}
     <span class="description">{{description}}</span>
     {{{previewHTML}}}
@@ -66,6 +66,10 @@
     <input type="button" class="inc-real {{real_score}}" value="This is Real!" />
     <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
     {{/if}}
+
+    
+     
+
     <a class="remove">delete this</a>
     <div class="vote_result">
      {{#if votedRightOnion}}

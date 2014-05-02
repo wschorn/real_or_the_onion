@@ -74,6 +74,8 @@ input[type=button].selected {
 
 }
 
+
+
 input[type=button].gray {
     background-color: #999;
 }
@@ -116,10 +118,16 @@ li.art-li {
     font-size: 1.75em;
 }
 
-.article.selected {
+.article.correct {
     background-color: #e3f8eb;
     color: #00693F !important;
 }
+
+.article.incorrect {
+    background-color: #f8e3eb;
+    color: #3F6900 !important;
+}
+
 
 .article.selected .score {
     color: black;

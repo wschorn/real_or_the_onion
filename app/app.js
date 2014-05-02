@@ -95,6 +95,15 @@ Template.article.votedReal = function (){
   return Session.equals("vote_" + this._id, "REAL")
 };
 
+
+Template.article.votedRight = function (){
+  return (Session.equals("vote_" + this._id, "ONION") && (this.long_url.indexOf(".theonion.com") >= 0)) || (Session.equals("vote_" + this._id, "REAL") && !(this.long_url.indexOf(".theonion.com") >= 0));
+};
+
+Template.article.votedWrong = function (){
+  return (Session.equals("vote_" + this._id, "ONION") && !(this.long_url.indexOf(".theonion.com") >= 0)) || (Session.equals("vote_" + this._id, "REAL") && (this.long_url.indexOf(".theonion.com") >= 0));
+};
+
 Template.article.votedRightOnion = function (){
   return Session.equals("vote_" + this._id, "ONION") && (this.long_url.indexOf(".theonion.com") >= 0);
 };
