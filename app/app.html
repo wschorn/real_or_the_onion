@@ -40,25 +40,12 @@
     </ul>
   </div>
 
-
-
-
-  {{#if selected_name}}
-  <div class="details">
-    <div class="name">{{selected_name}}</div>
-    <input type="button" class="inc" value="Give 5 points" />
-  </div>
-  {{else}}
-  {{/if}}
-
-
-
 </template>
 
 <template name="article">
   <li class="art-li">
-  <div class="article {{selected}} {{#if votedRight}}correct{{/if}} {{#if votedWrong}}incorrect{{/if}}">
-    <a class="remove">delete this</a>
+  <div id="{{_id}}" class="article {{selected}} {{#if votedRight}}correct{{/if}} {{#if votedWrong}}incorrect{{/if}}">
+    <a class="remove">delete</a>
     <a class="title-link" href="{{short_url}}">{{title}}</a>
     <p>{{ts_ago}}</p>
     <span class="description">{{description}}</span>
