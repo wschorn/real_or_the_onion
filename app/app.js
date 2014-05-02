@@ -40,6 +40,20 @@ Template.leaderboard.bestReal = function () {
 
 
 };
+Template.leaderboard.searchString = function () {
+  return Session.get("searching");
+}
+
+Template.leaderboard.searchResults = function () {
+  var s = Session.get("searching");
+  if(s != null){
+
+    return Players.find({long_url: s}, {sort: {long_url: -1}});
+
+
+  }
+
+}
 
 Template.leaderboard.bestOfType = function () {
 
@@ -120,19 +134,29 @@ Template.article.votedWrongReal = function (){
   return Session.equals("vote_" + this._id, "REAL") && (this.long_url.indexOf(".theonion.com") >= 0);
 };
 
+Template.type_tabs.selectedOnion = function () {
+  return Session.equals("selected_type", "onion") ? "selected" : '';
+};
+
+Template.type_tabs.selectedReal = function () {
+  return Session.equals("selected_type", "real") ? "selected" : '';
+};
+
+
+
 Template.type_tabs.selectedLeader = function () {
   return Session.equals("selected_type", "leader") ? "selected" : '';
 };
 
 Template.leaderboard.events({
   'click input.inc-real': function () {
-    Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
+    Players.update(Session.get("selected_article"), {$inc: {real_score: 1}});
     voteInSession(this._id);
     Session.set("vote_" + this._id, "REAL")
 
   },
   'click input.inc-onion': function () {
-    Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
+    Players.update(Session.get("selected_article"), {$inc: {onion_score: 1}});
     voteInSession(this._id);
     Session.set("vote_" + this._id, "ONION")
 
@@ -164,6 +188,9 @@ Template.article.events({
   }
 });
 Template.new_article.events = {
+  'click .clear': function () {
+        Session.set("searching", null);
+  },
   'click input.add': function () {
 
     var new_article_name = document.getElementById("new_article_name").value;
@@ -171,6 +198,9 @@ Template.new_article.events = {
     var longLink = new_article_name;
     console.log("making" + longLink);
     var title;
+    Session.set("searching", longLink)
+
+
     Meteor.call('fetchFromService', longLink, function(err, respJson) {
       console.log("new_article_resp " + respJson);
     });

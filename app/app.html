@@ -11,6 +11,7 @@
             </a>
         </div>
         <div class="roo-u-1-2">
+           <a href="#" class="clear">clear</a>
         {{> new_article }}
         </div>
     </div> <!-- /container -->
@@ -21,7 +22,17 @@
   </div>
 </body>
 
+
+
 <template name="leaderboard">
+  {{#if searchResults}}
+      Already submitted {{searchString}}: 
+        {{#each searchResults}}
+          {{> article}}
+        {{/each}}
+        more stories:
+    {{/if}}
+
   <div class="leaderboard">
     <ul class="art-ul">
         {{#each bestOfType}}
@@ -39,7 +50,6 @@
     <input type="button" class="inc" value="Give 5 points" />
   </div>
   {{else}}
-  <div class="instructions">Click a article to select</div>
   {{/if}}
 
 
@@ -50,7 +60,7 @@
   <li class="art-li">
   <div class="article {{selected}} {{#if votedRight}}correct{{/if}} {{#if votedWrong}}incorrect{{/if}}">
     <a class="remove">delete this</a>
-    <a class="title-link" href="{{long_url}}">{{title}}</a>
+    <a class="title-link" href="{{short_url}}">{{title}}</a>
     <p>{{ts_ago}}</p>
     <span class="description">{{description}}</span>
     {{{previewHTML}}}
