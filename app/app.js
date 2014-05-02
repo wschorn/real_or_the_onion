@@ -79,19 +79,14 @@ Template.leaderboard.bestOfType = function () {
 
 };
 
-  getPlayer = function(id) {
-    var p = Players.findOne({_id: id});
-    if(p != null){
-      console.log("p" + p);
-    }else{
-      console.error("NO P:" + id);
-    }
-    return p;
+getPlayer = function(id) {
+  var p = Players.findOne({_id: id});
+  return p;
 }
 
-  getIsOnion = function(id) {
-    var p = Players.findOne({_id: id});
-    return (p.long_url.indexOf(".theonion.com") > -1);
+getIsOnion = function(id) {
+  var p = Players.findOne({_id: id});
+  return (p.long_url.indexOf(".theonion.com") > -1);
 }
 
 Template.leaderboard.currentScoreVotes = function () {
@@ -102,21 +97,21 @@ Template.leaderboard.currentScore = function () {
   var pTemp;
   var s = 0;
   if(Session.equals("selected_type", "real")){
-     pTemp = Players.find({}, {sort: {real_score: -1, name: 1}});
+   pTemp = Players.find({}, {sort: {real_score: -1, name: 1}});
 
-  }else if(Session.equals("selected_type", "onion")){
-     pTemp = Players.find({}, {sort: {onion_score: -1, name: 1}});
-  }else{
+ }else if(Session.equals("selected_type", "onion")){
+   pTemp = Players.find({}, {sort: {onion_score: -1, name: 1}});
+ }else{
 
    pTemp = Players.find({}, {sort: {ts: -1}});
-  }
-  pTemp.forEach(function(player){
+ }
+ pTemp.forEach(function(player){
 
-    var isOnion = getIsOnion(player._id);
-    var didVoteOnion = Session.equals("vote_" + player._id, "ONION");
-    var didVoteReal = Session.equals("vote_" + player._id, "REAL");
+  var isOnion = getIsOnion(player._id);
+  var didVoteOnion = Session.equals("vote_" + player._id, "ONION");
+  var didVoteReal = Session.equals("vote_" + player._id, "REAL");
 
-    if(didVoteReal || didVoteOnion){
+  if(didVoteReal || didVoteOnion){
       //we did vote
       if(   (isOnion && didVoteOnion) || (!isOnion && didVoteReal)   ){
         s++;
@@ -124,7 +119,7 @@ Template.leaderboard.currentScore = function () {
     }
   });
 
-  return s;
+ return s;
 
 };
 
@@ -239,19 +234,17 @@ Template.article.shortlink
 
 Template.article.events({
   'click .remove': function () {
-    console.log(this + "\n oooooo \n " + this._id + this.short_url);
     Meteor.call('removeFromBundle', this._id, this.short_url);
     Players.remove
   },
-    'click': function () {
+  'click': function () {
     Session.set("selected_article", this._id);
   }
 });
 Template.new_article.events = {
   'click input.clear': function () {
-        Session.set("searching", "");
-        console.log(this);
-        $('#new_article_name').val('');
+    Session.set("searching", "");
+    $('#new_article_name').val('');
   },
   'click input.add': function () {
 
@@ -268,11 +261,10 @@ Template.new_article.events = {
     Meteor.call('fetchFromService', longLink, function(err, respJson) {
 
       if(respJson != null){
-      console.log("new_article_resp " + respJson);
-      Session.set("searching", "");
-    }else{
-      console.error(err);
-    }
+        Session.set("searching", "");
+      }else{
+        console.error(err);
+      }
 
     });
 
@@ -294,7 +286,7 @@ if (Meteor.isServer) {
 
   var b = new Bitly(dummyUser, "throwaway1");
 
-      b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
+  b.bundleSync = Meteor._wrapAsync(b.bundle.contents);
      // b.getPreview = Meteor._wrapAsync(b.link.info);
      b.getPreviewHTML = Meteor._wrapAsync(b.link.content);
      b.getLinkInfo = Meteor._wrapAsync(b.info);
@@ -304,35 +296,35 @@ if (Meteor.isServer) {
 
 
 
-  fetchQuizFromBundle =  function(bundleUrl) {
-    var newQuiz = {}
+     fetchQuizFromBundle =  function(bundleUrl) {
+      var newQuiz = {}
       // _wrapAsync is undocumented, but I freaking love it. Any of the bitly-oauth methods can be wrapped this way.
 
 
-     try {
-      var result = b.bundleSync({bundle_link: bundleUrl});
+      try {
+        var result = b.bundleSync({bundle_link: bundleUrl});
 
-    }
-    catch(e) {
-      console.error("fetch error: " + e);
-    }
+      }
+      catch(e) {
+        console.error("fetch error: " + e);
+      }
 
-    newMysterys = [];
+      newMysterys = [];
 
-    var links = result.data.bundle.links;
-    var previewHTML = "";
-    for (var i = 0; i < links.length; i++){
-      insertFromLink(links[i]);
+      var links = result.data.bundle.links;
+      var previewHTML = "";
+      for (var i = 0; i < links.length; i++){
+        insertFromLink(links[i]);
 
-    }
+      }
 
-    for(var myLink in result.data.bundle.links){
-      curr = result.data.bundle.links[myLink];
-      ng = {"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"};
+      for(var myLink in result.data.bundle.links){
+        curr = result.data.bundle.links[myLink];
+        ng = {"title": "funny story #" + "" + Math.floor((Math.random() * 100) + 1), "description": "a funny thing happened"};
 
-      newMysterys.push(ng);
-    }
-    var rdb = result.data.bundle;
+        newMysterys.push(ng);
+      }
+      var rdb = result.data.bundle;
       //currently the user photo is stored in the description. this is janky, eventually we should perhaps pull the first link in the bundle?
       newQuiz = {user: rdb.bundle_owner, name: rdb.title, userPhoto: rdb.description, Mysterys: newMysterys, ts_modified: rdb.last_modified_ts};
       return newQuiz;
@@ -340,8 +332,6 @@ if (Meteor.isServer) {
 
 
     insertFromLink = function (linkObject) {
-      console.log("inserting: " + JSON.stringify(linkObject));
-
       try {
         var previewHTML;
         var preview = b.getPreviewHTML({"link": linkObject.link});
@@ -351,10 +341,6 @@ if (Meteor.isServer) {
         }else{
           console.error("preview error: " + JSON.stringify(linkObject) + "\n gives \n" + preview.status_txt);
         }
-
-       // console.log("\n HTML" + previewHTML);
-
-
 
       }
       catch(e){
@@ -366,13 +352,10 @@ if (Meteor.isServer) {
       try {
        var ts;
 
-        var ts_data = b.getLinkInfo({"shortUrl": linkObject.link});
-        var temp = JSON.stringify(ts_data);
-        console.log("link info data for call: " + JSON.stringify(linkObject) + " was " + temp);
-        if(ts_data.status_code == 200){
+       var ts_data = b.getLinkInfo({"shortUrl": linkObject.link});
+       var temp = JSON.stringify(ts_data);
+       if(ts_data.status_code == 200){
         ts_info = ts_data.data.info[0];
-        console.log("link info data ii " + ts_info);
-
         ts = ts_info.created_at;
         var title = ts_info.title;
         if(title == null){
@@ -381,75 +364,59 @@ if (Meteor.isServer) {
 
         if (title.indexOf("|") !== -1) {
          title = title.substring(0, title.indexOf("|"));
-        }
+       }
 
-    }
+     }
 
-      }
-      catch(e){
-        console.error("link info error: " + e);
-      }
+   }
+   catch(e){
+    console.error("link info error: " + e);
+  }
 
-
-
-      var newArticleObj = {"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts, long_url: linkObject.long_url, short_url: linkObject.link};
-      console.log(newArticleObj);
-      Players.insert(newArticleObj);
-    }
+  var newArticleObj = {"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts, long_url: linkObject.long_url, short_url: linkObject.link};
+  console.log(newArticleObj);
+  Players.insert(newArticleObj);
+}
 
 
-    Meteor.startup(function () {
+Meteor.startup(function () {
 
-      var b1 = "https://bitly.com/bundles/wschornmeteor/3"
+  var b1 = "https://bitly.com/bundles/wschornmeteor/3"
 
-      Meteor.methods({
-
-
-        refreshFromBundle: function () {
-          Players.remove({});
-          fetchQuizFromBundle();
-        },
-
-        bar: function () {
-
-        // QUESTION: HOW TO CALL Meteor.methods.foo
-        return 1 + foo;
-
-      },
-      removeFromBundle: function(id, shortlink) {
-
-        var result = b.removeFromBundle({"bundle_link": b1, link: shortlink});
-        console.log("INPUT: " + b1 + " " + shortlink);
-        console.log(JSON.stringify(result));
-        Players.remove({_id: id});
-
-      },
-      fetchFromService: function(longLink) {
-        //var url = "http://api-ssl.bitly.com/v3/bundle/link_add?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fjennyyin%2F5&access_token=a97cd736e88d60e46cc10eb0edd154fda1675b02&link=" + longLink;
-        //synchronous GET
-
-        var result = b.addToBundle({"link": longLink, "bundle_link": b1});
-
-
-          if(result.status_code == 200){
-            var newLink = result.data.bundle.links.pop().link;
-            insertFromLink({link: newLink, long_url: longLink});
-            console.log("Should be showing newly inserted link");
-          }else{
-
-            console.error("fetchFromService error: " + JSON.stringify(result));
-            return error;
-          }
-
-      }
-    });
-
-
-    if (Players.find().count() < 30){
+  Meteor.methods({
+    refreshFromBundle: function () {
       Players.remove({});
-    this.fetchQuizFromBundle(b1);
+      fetchQuizFromBundle();
+    },
+
+    removeFromBundle: function(id, shortlink) {
+
+      var result = b.removeFromBundle({"bundle_link": b1, link: shortlink});
+      console.log("INPUT: " + b1 + " " + shortlink);
+      console.log(JSON.stringify(result));
+      Players.remove({_id: id});
+
+    },
+    fetchFromService: function(longLink) {
+      var result = b.addToBundle({"link": longLink, "bundle_link": b1});
+
+      if(result.status_code == 200){
+        var newLink = result.data.bundle.links.pop().link;
+        insertFromLink({link: newLink, long_url: longLink});
+      }else{
+
+        console.error("fetchFromService error: " + JSON.stringify(result));
+        return error;
+      }
 
     }
   });
+
+  if (Players.find().count() < 30){
+    Players.remove({});
+    this.fetchQuizFromBundle(b1);
+
+  }
+});
 
 }
