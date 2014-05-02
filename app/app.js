@@ -77,24 +77,51 @@ Template.article.ts_ago = function (){
   return moment((this.ts * 1000)).fromNow()
 };
 
-
-Template.type_tabs.selectedOnion = function () {
-  return Session.equals("selected_type", "onion") ? "selected" : '';
+Template.article.sessionVote = function (){
+  return Session.get("vote_" + this._id)
 };
 
-Template.type_tabs.selectedReal = function () {
-  return Session.equals("selected_type", "real") ? "selected" : '';
+Template.article.articleType = function (){
+  if(this.long_url.indexOf(".theonion.com") >= 0)
+    return "ONION"
+  return "REAL"
+};
+
+Template.article.votedOnion = function (){
+  return Session.equals("vote_" + this._id, "ONION")
+};
+
+Template.article.votedReal = function (){
+  return Session.equals("vote_" + this._id, "REAL")
+};
+
+Template.article.votedRightOnion = function (){
+  return Session.equals("vote_" + this._id, "ONION") && (this.long_url.indexOf(".theonion.com") >= 0);
+};
+
+Template.article.votedRightReal = function (){
+  return Session.equals("vote_" + this._id, "REAL") && !(this.long_url.indexOf(".theonion.com") >= 0);
+};
+
+Template.article.votedWrongOnion = function (){
+  return Session.equals("vote_" + this._id, "ONION") && !(this.long_url.indexOf(".theonion.com") >= 0);
+};
+
+Template.article.votedWrongReal = function (){
+  return Session.equals("vote_" + this._id, "REAL") && (this.long_url.indexOf(".theonion.com") >= 0);
 };
 
 Template.leaderboard.events({
   'click input.inc-real': function () {
     Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});
     voteInSession(this._id);
+    Session.set("vote_" + this._id, "REAL")
 
   },
   'click input.inc-onion': function () {
     Players.update(Session.get("selected_article"), {$inc: {onion_score: 5}});
     voteInSession(this._id);
+    Session.set("vote_" + this._id, "ONION")
 
   }
 });
@@ -198,20 +225,17 @@ if (Meteor.isServer) {
     };
 
 
-    insertFromLink = function (shortUrl) {
-      console.log("inserting: " + JSON.stringify(shortUrl));
-
-
-
+    insertFromLink = function (linkObject) {
+      console.log("inserting: " + JSON.stringify(linkObject));
 
       try {
         var previewHTML;
-        var preview = b.getPreviewHTML({"link": shortUrl.link});
+        var preview = b.getPreviewHTML({"link": linkObject.link});
 
         if(preview.status_code == 200){
           previewHTML = preview.data.content;
         }else{
-          console.error("preview error: " + JSON.stringify(shortUrl) + "\n gives \n" + preview.status_txt);
+          console.error("preview error: " + JSON.stringify(linkObject) + "\n gives \n" + preview.status_txt);
         }
 
        // console.log("\n HTML" + previewHTML);
@@ -228,9 +252,9 @@ if (Meteor.isServer) {
       try {
        var ts;
 
-        var ts_data = b.getLinkInfo({"shortUrl": shortUrl.link});
+        var ts_data = b.getLinkInfo({"shortUrl": linkObject.link});
         var temp = JSON.stringify(ts_data);
-        console.log("link info data for call: " + shortUrl + " was " + temp);
+        console.log("link info data for call: " + JSON.stringify(linkObject) + " was " + temp);
         if(ts_data.status_code == 200){
         ts_info = ts_data.data.info[0];
         console.log("link info data ii " + ts_info);
@@ -251,7 +275,7 @@ if (Meteor.isServer) {
 
 
 
-      var newArticleObj = {"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts, long_url: ts_info.long_url, short_url: ts_info.short_url};
+      var newArticleObj = {"title": title, "real_score": 0, "onion_score": 0, "previewHTML": previewHTML, "ts": ts, long_url: linkObject.long_url, short_url: linkObject.link};
       console.log(newArticleObj);
       Players.insert(newArticleObj);
     }
@@ -292,7 +316,7 @@ if (Meteor.isServer) {
 
           if(result.status_code == 200){
             var newLink = result.data.bundle.links.pop().link;
-            insertFromLink({link: newLink});
+            insertFromLink({link: newLink, long_url: longLink});
             console.log("Should be showing newly inserted link");
           }else{
 

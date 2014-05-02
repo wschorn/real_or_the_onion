@@ -67,6 +67,24 @@
     <input type="button" class="inc-onion {{onion_score}}" value="This is Onion!" />
     {{/if}}
     <a class="remove">delete this</a>
+    <div class="vote_result">
+     {{#if votedRightOnion}}
+    Phew! Yup, this is TheOnion.com
+     {{/if}}
+
+    {{#if votedRightReal}}
+    Uh, yeah! This is a 'Real' News Article
+     {{/if}}
+
+
+     {{#if votedWrongOnion}}
+    Dang! This is real news! 
+     {{/if}}
+
+    {{#if votedWrongReal}}
+    Don't worry! This is actually TheOnion.com 
+     {{/if}}
+      </div>
   </div>
   </li>
 </template>
