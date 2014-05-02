@@ -116,11 +116,7 @@ Template.leaderboard.currentScore = function () {
     var didVoteOnion = Session.equals("vote_" + player._id, "ONION");
     var didVoteReal = Session.equals("vote_" + player._id, "REAL");
 
-  console.log("isOnion "+ isOnion);
-   console.log("isOnion "+ didVoteOnion);
-   console.log("didvotereal " + didVoteReal);
     if(didVoteReal || didVoteOnion){
-      console.log("voted " + player._id);
       //we did vote
       if(   (isOnion && didVoteOnion) || (!isOnion && didVoteReal)   ){
         s++;
@@ -253,21 +249,31 @@ Template.article.events({
 });
 Template.new_article.events = {
   'click input.clear': function () {
-      console.log("CLEAR");
         Session.set("searching", "");
+        console.log(this);
+        $('#new_article_name').val('');
   },
   'click input.add': function () {
 
     var new_article_name = document.getElementById("new_article_name").value;
     var desc = "a silly article";
     var longLink = new_article_name;
-    console.log("making" + longLink);
+    console.log("making " + longLink);
     var title;
+
     Session.set("searching", longLink)
+    //if we have any search results, don't do this
 
 
     Meteor.call('fetchFromService', longLink, function(err, respJson) {
+
+      if(respJson != null){
       console.log("new_article_resp " + respJson);
+      Session.set("searching", "");
+    }else{
+      console.error(err);
+    }
+
     });
 
       //hit the endpoint here
@@ -429,6 +435,7 @@ if (Meteor.isServer) {
           }else{
 
             console.error("fetchFromService error: " + JSON.stringify(result));
+            return error;
           }
 
       }
