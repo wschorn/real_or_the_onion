@@ -78,12 +78,15 @@ input[type=button].gray {
     background-color: #999;
 }
 .type_tabs input[type=button] {
-    background-color: #f0ad4e;
+    background-color: #fff;
+    color: #232323;
+    border: 1px solid #0078e7;
     font-size: 14px;
 }
 
 .type_tabs input[type=button].selected {
-    background-color: #5cb85c;
+    background-color: #0078e7;
+    color: #fff;
 }
 
 .new_article {
@@ -99,7 +102,7 @@ input[type=button].gray {
     color: #61b3de;
 }
 .article-body {
-    max-height: 300px;
+    max-height: 260px;
     overflow: scroll;
 }
 .title-link:hover {
@@ -112,7 +115,7 @@ input[type=button].gray {
 li.art-li {
 
     min-height: 100px;
-    padding: 20px;
+    padding: 30px;
     text-align: left;
     list-style: none;
     background: white;
@@ -169,6 +172,9 @@ li.art-li:first-child {
 .voting {
     height: 50px;
     padding: 10px;
+}
+.voting input {
+    font-size: 14px;
 }
 
 .vote_result {
