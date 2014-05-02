@@ -90,6 +90,26 @@ input[type=button].gray {
     height: 65px;
 }
 
+.txtlogo {
+    font-size: 20px;
+    position: relative;
+    top: -10px;
+    left: 10px;
+}
+
+.txtlogo_r {
+    color: #0078e7;
+    font-weight: 400;
+}
+
+.txtlogo_o {
+    color: #008d52;
+    font-weight: 400;
+
+}
+
+
+
 .vote_button.inc-real{
     background-image:url('real-news-logo.png');
     background-repeat: no-repeat;
