@@ -111,7 +111,7 @@ Template.leaderboard.currentScore = function () {
    pTemp = Players.find({}, {sort: {ts: -1}});
   }
   pTemp.forEach(function(player){
-    
+
     var isOnion = getIsOnion(player._id);
     var didVoteOnion = Session.equals("vote_" + player._id, "ONION");
     var didVoteReal = Session.equals("vote_" + player._id, "REAL");
@@ -378,7 +378,10 @@ if (Meteor.isServer) {
         if(title == null){
           title = "Untitled Story Happens";
         }
-         title = title.replace("| The Onion - America's Finest News Source","");
+
+        if (title.indexOf("|") !== -1) {
+         title = title.substring(0, title.indexOf("|"));
+        }
 
     }
 
