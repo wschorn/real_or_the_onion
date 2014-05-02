@@ -120,6 +120,10 @@ Template.article.votedWrongReal = function (){
   return Session.equals("vote_" + this._id, "REAL") && (this.long_url.indexOf(".theonion.com") >= 0);
 };
 
+Template.type_tabs.selectedLeader = function () {
+  return Session.equals("selected_type", "leader") ? "selected" : '';
+};
+
 Template.leaderboard.events({
   'click input.inc-real': function () {
     Players.update(Session.get("selected_article"), {$inc: {real_score: 5}});

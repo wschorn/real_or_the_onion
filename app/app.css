@@ -65,8 +65,6 @@ input[type=button] {
     -webkit-user-drag: none;
     -webkit-user-select: none;
     outline: none;
-
-
 }
 
 input[type=button].selected {
@@ -78,6 +76,14 @@ input[type=button].selected {
 
 input[type=button].gray {
     background-color: #999;
+}
+.type_tabs input[type=button] {
+    background-color: #f0ad4e;
+    font-size: 14px;
+}
+
+.type_tabs input[type=button].selected {
+    background-color: #5cb85c;
 }
 
 .new_article {
@@ -91,7 +97,10 @@ input[type=button].gray {
     font-size: 24px;
     color: #61b3de;
 }
-
+.article-body {
+    max-height: 300px;
+    overflow: scroll;
+}
 .title-link:hover {
     color: #00693F;
 }
@@ -111,11 +120,18 @@ li.art-li {
     margin: 40px 0;
 
 }
+li.art-li:first-child {
+    margin-top:  10px;
+}
 
 .article .name {
     display: inline-block;
     min-width: 300px;
     font-size: 1.75em;
+}
+
+.remove {
+    float: right;
 }
 
 .article.correct {
