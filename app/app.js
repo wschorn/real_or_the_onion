@@ -397,7 +397,7 @@ if (Meteor.isServer) {
 
     Meteor.startup(function () {
 
-      var b1 = "https://bitly.com/bundles/wschornmeteor/1"
+      var b1 = "https://bitly.com/bundles/wschornmeteor/3"
 
       Meteor.methods({
 
