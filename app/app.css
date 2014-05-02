@@ -143,6 +143,13 @@ li.art-li:first-child {
     left: -50px;
 }
 
+.scoreCounter {
+    position: fixed;
+    top: 100px;
+    left: 100px;
+    padding: 10px;
+}
+
 .article.correct {
     background-color: #e3f8eb;
     color: #00693F !important;

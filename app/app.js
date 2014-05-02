@@ -8,11 +8,15 @@ if (Meteor.isClient) {
 
  Meteor.startup(function () {
   Session.setDefault("voted", []);
+  Session.set("vote_count", 0);
 });
 
  voteInSession = function ( votingID ){
   var vTemp = Session.get("voted");
 
+  var vCount = Session.get("vote_count");
+  vCount++;
+  Session.set("vote_count", vCount);
 
   console.log("WTF VOTES " + vTemp);
 
@@ -21,6 +25,9 @@ if (Meteor.isClient) {
 
   }else{
     vTemp.push(votingID);
+
+
+
   }
 
   Session.set("voted", vTemp);
@@ -71,6 +78,60 @@ Template.leaderboard.bestOfType = function () {
 
 
 };
+
+  getPlayer = function(id) {
+    var p = Players.findOne({_id: id});
+    if(p != null){
+      console.log("p" + p);
+    }else{
+      console.error("NO P:" + id);
+    }
+    return p;
+}
+
+  getIsOnion = function(id) {
+    var p = Players.findOne({_id: id});
+    return (p.long_url.indexOf(".theonion.com") > -1);
+}
+
+Template.leaderboard.currentScoreVotes = function () {
+  return Session.get("vote_count");
+};
+
+Template.leaderboard.currentScore = function () {
+  var pTemp;
+  var s = 0;
+  if(Session.equals("selected_type", "real")){
+     pTemp = Players.find({}, {sort: {real_score: -1, name: 1}});
+
+  }else if(Session.equals("selected_type", "onion")){
+     pTemp = Players.find({}, {sort: {onion_score: -1, name: 1}});
+  }else{
+
+   pTemp = Players.find({}, {sort: {ts: -1}});
+  }
+  pTemp.forEach(function(player){
+    
+    var isOnion = getIsOnion(player._id);
+    var didVoteOnion = Session.equals("vote_" + player._id, "ONION");
+    var didVoteReal = Session.equals("vote_" + player._id, "REAL");
+
+  console.log("isOnion "+ isOnion);
+   console.log("isOnion "+ didVoteOnion);
+   console.log("didvotereal " + didVoteReal);
+    if(didVoteReal || didVoteOnion){
+      console.log("voted " + player._id);
+      //we did vote
+      if(   (isOnion && didVoteOnion) || (!isOnion && didVoteReal)   ){
+        s++;
+      }
+    }
+  });
+
+  return s;
+
+};
+
 
 
 Template.leaderboard.selected_name = function () {
@@ -147,6 +208,9 @@ Template.type_tabs.selectedReal = function () {
 Template.type_tabs.selectedLeader = function () {
   return Session.equals("selected_type", "leader") ? "selected" : '';
 };
+
+
+
 
 Template.leaderboard.events({
   'click input.inc-real': function () {

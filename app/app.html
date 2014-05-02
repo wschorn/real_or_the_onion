@@ -24,6 +24,10 @@
 
 
 <template name="leaderboard">
+  <div class="scoreCounter">
+    <span>Score:</span> 
+    {{currentScore}} /   {{currentScoreVotes}}
+  </div>
   {{#if searchString}}
       Already submitted {{searchString}}: 
         {{#each searchResults}}
