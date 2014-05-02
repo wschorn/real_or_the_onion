@@ -141,9 +141,9 @@ li.art-li:first-child {
 .reaction {
     max-height: 100px;
     max-width: 100px;
-    position: relative;
-    top: -30px;
-    left: -50px;
+    position: absolute;
+    left: -10px;
+    top: -25px;
 }
 
 .scoreCounter {
@@ -178,9 +178,16 @@ li.art-li:first-child {
 }
 
 .vote_result {
-    vertical-align: top;
+    position:  relative;
 }
 
+.vote_result .roo-u-2-3 {
+    font-size: 22px;
+}
+
+.reveal-title-link {
+    float: right;
+}
 .details, .none {
     font-weight: bold;
     font-size: 2em;
